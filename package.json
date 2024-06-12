@@ -1,0 +1,31 @@
+{
+  "name": "assignment-3---bike-rental",
+  "version": "1.0.0",
+  "description": "backend server of a bike rental service",
+  "main": "./dist/server.js",
+  "scripts": {
+    "start:prod": "node ./dist/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:dev": "tsnd --respawn ./src/server.ts",
+    "lint": "npx eslint .",
+    "lint:fix": "npx eslint src --fix"
+  },
+  "author": "Kazi Mehedi Hasan",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mongoose": "^8.4.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.4.0",
+    "@types/eslint__js": "^8.42.3",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.14.2",
+    "eslint": "^8.57.0",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.4.5",
+    "typescript-eslint": "^7.13.0"
+  }
+}
