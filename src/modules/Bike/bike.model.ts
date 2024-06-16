@@ -30,6 +30,6 @@ const createBikeSchema = new Schema<TBike>({
         type: "string",
         required: true
     }
-})
+}, { versionKey: false })
 
 export const Bikes = model<TBike>('Bikes', createBikeSchema);
