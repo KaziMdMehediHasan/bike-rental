@@ -15,7 +15,7 @@ const UserSchema = new Schema<TUser>({
     password: {
         type: "string",
         required: true,
-        select: false
+        // select: false
     },
     phone: {
         type: "string",
@@ -31,30 +31,31 @@ const UserSchema = new Schema<TUser>({
     }
 }, {
     timestamps: true,
-    toJSON: {
-        transform: function (mongoDBResponse, objectFromMongoDB) {
-            delete objectFromMongoDB.password;
-            const organizedResponse = {
-                _id: objectFromMongoDB._id,
-                name: objectFromMongoDB.name,
-                email: objectFromMongoDB.email,
-                phone: objectFromMongoDB.phone,
-                address: objectFromMongoDB.address,
-                role: objectFromMongoDB.role,
-                createdAt: objectFromMongoDB.createdAt,
-                updatedAt: objectFromMongoDB.updatedAt,
-                __v: objectFromMongoDB.__v
-            }
-            return organizedResponse;
-        }
-    }
+    // toJSON: {
+    //     transform: function (mongoDBResponse, objectFromMongoDB) {
+    //         // const copyOfReturnedObject = { ...objectFromMongoDB }
+    //         // delete objectFromMongoDB.password;
+    //         const organizedResponse = {
+    //             _id: objectFromMongoDB._id,
+    //             name: objectFromMongoDB.name,
+    //             email: objectFromMongoDB.email,
+    //             phone: objectFromMongoDB.phone,
+    //             address: objectFromMongoDB.address,
+    //             role: objectFromMongoDB.role,
+    //             createdAt: objectFromMongoDB.createdAt,
+    //             updatedAt: objectFromMongoDB.updatedAt,
+    //             __v: objectFromMongoDB.__v
+    //         }
+    //         return organizedResponse;
+    //     }
+    // }
 })
 
 // hashing the password before saving to the database
 UserSchema.pre('save', async function (next) {
     const user = this;
     user.password = await bcrypt.hash(
-        user.password,
+        user?.password,
         Number(config.bcrypt_salt_rounds)
     )
     next();
