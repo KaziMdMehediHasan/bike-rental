@@ -77,15 +77,25 @@ const updateUserProfile = async (req: ExtendedRequest, res: Response, next: Next
         if (req.user !== undefined) {
             userId = req.user.userId;
         }
-        const updatedUserProfileData = userValidation.userValidationUpdateSchema.parse(req.body);
-        const result = await UserServices.updateUserProfileIntoDB(userId, updatedUserProfileData);
 
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            message: "Profile updated successfully",
-            data: result
-        })
+        if (req.body.password || req.body.role) {
+            res.status(httpStatus.UNAUTHORIZED).json({
+                success: false,
+                statusCode: httpStatus.UNAUTHORIZED,
+                message: 'Request can not be processed'
+            })
+        } else {
+            const updatedUserProfileData = userValidation.userValidationUpdateSchema.parse(req.body);
+            const result = await UserServices.updateUserProfileIntoDB(userId, updatedUserProfileData);
+
+            res.status(200).json({
+                success: true,
+                statusCode: 200,
+                message: "Profile updated successfully",
+                data: result
+            })
+        }
+
     } catch (err) {
         next(err);
     }
