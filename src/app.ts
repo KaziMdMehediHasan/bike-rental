@@ -1,5 +1,4 @@
 import express from 'express';
-import { UserRoutes } from './modules/User/user.route';
 import cors from 'cors';
 import globalErrorHandler from './middlewares/globalErrorHandler';
 import notFound from './middlewares/notFound';
