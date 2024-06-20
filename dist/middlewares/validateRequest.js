@@ -8,25 +8,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const app_1 = __importDefault(require("./app"));
-const mongoose_1 = __importDefault(require("mongoose"));
-const config_1 = __importDefault(require("./config"));
-function main() {
-    return __awaiter(this, void 0, void 0, function* () {
+const validateRequest = (schema) => {
+    return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            yield mongoose_1.default.connect(config_1.default.db_url);
-            app_1.default.listen(config_1.default.port, () => {
-                console.log(`Database connected and server is running on port ${process.env.PORT}`);
+            yield schema.parseAsync({
+                body: req.body
             });
+            next();
         }
-        catch (error) {
-            console.log(error);
+        catch (err) {
+            next(err);
         }
-        // use `await mongoose.connect('mongodb://user:password@127.0.0.1:27017/test');` if your database has auth enabled
     });
-}
-main();
+};
+exports.default = validateRequest;
