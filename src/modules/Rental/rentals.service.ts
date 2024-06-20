@@ -2,15 +2,23 @@ import mongoose from "mongoose";
 import { TRental } from "./rentals.interface";
 import { Rentals } from "./rentals.model";
 import { Bikes } from "../Bike/bike.model";
+import AppError from "../../errors/AppError";
+import httpStatus from "http-status";
 
 const rentBikeToDB = async (payload: Partial<TRental>) => {
+    const bikeData = await Bikes.findById({ _id: payload.bikeId });
+    // if user tries to rent a bike that is already out for rent
+    if (!bikeData?.isAvailable) {
+        throw new AppError(httpStatus.BAD_REQUEST, 'Bike is not available at this moment');
+    }
+
     const session = await mongoose.startSession();
     try {
         session.startTransaction();
         // transaction 1: create a rental
         const newRental = await Rentals.create([payload], { session });
         if (!newRental.length) {
-            throw new Error(`Could not create rental`);
+            throw new AppError(httpStatus.NOT_MODIFIED, `Could not create rental`);
         }
 
         const retrievedBikeId = newRental[0]?.bikeId;
@@ -22,7 +30,7 @@ const rentBikeToDB = async (payload: Partial<TRental>) => {
         )
 
         if (!updateBikeAvailability) {
-            throw new Error(`Could not update bike availability`);
+            throw new AppError(httpStatus.NOT_MODIFIED, `Could not update bike availability`);
         }
 
         await session.commitTransaction();
@@ -39,21 +47,35 @@ const rentBikeToDB = async (payload: Partial<TRental>) => {
 
 const returnBikeToDB = async (payload: string) => {
     const session = await mongoose.startSession();
-
-    const existingBikeData = await Rentals.findById(
+    const existingBikeRentalData = await Rentals.findById(
         { _id: payload }
     );
-    const startTimeInMS = existingBikeData?.startTime.getTime();
+
+    // handling edge case when admin tries to return a bike that is already returned
+
+    if (existingBikeRentalData?.isReturned) {
+        throw new AppError(httpStatus.BAD_REQUEST, `Bike already returned`);
+    }
+
+    // checking if the bike exist 
+    const bikeData = await Bikes.findById({ _id: existingBikeRentalData?.bikeId });
+
+    if (!bikeData) {
+        throw new AppError(httpStatus.NOT_FOUND, 'No price per hour data found for the bike');
+    }
+
+    //calculating the time difference between rent and return
+    const startTimeInMS = existingBikeRentalData?.startTime.getTime();
     const returnTimeInMS = Date.now();
     const returnTime = new Date();
     let totalCost: number = 0;
 
     if (startTimeInMS) {
         const totalRentDuration = (returnTimeInMS - startTimeInMS) / (1000 * 60 * 60); //to convert milliseconds to hours
-        totalCost = Number((totalRentDuration * 15).toFixed(2));
+        totalCost = Number((totalRentDuration * Number(bikeData?.pricePerHour)).toFixed(2));
         // console.log(Number(totalCost.toFixed(2)));
     } else {
-        throw new Error('Invalid Time')
+        throw new AppError(httpStatus.NOT_ACCEPTABLE, 'Invalid Start Time')
     }
 
     try {
@@ -71,7 +93,7 @@ const returnBikeToDB = async (payload: string) => {
         // transaction 2: update the bike availability status
 
         const bikeIsAvailable = await Bikes.findByIdAndUpdate(
-            { _id: existingBikeData?.bikeId },
+            { _id: existingBikeRentalData?.bikeId },
             { $set: { isAvailable: true } },
             { new: true, session }
         )

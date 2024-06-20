@@ -1,14 +1,12 @@
 import { NextFunction, Response } from "express";
 import { ExtendedRequest } from "../../interface";
-import { BikeValidation } from "./bike.validation";
 import { BikeServices } from "./bike.service";
 import httpStatus from "http-status";
+import AppError from "../../errors/AppError";
 
 const createBike = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
     try {
-        const validatedBikeData = BikeValidation.createBikeValidationSchema.parse(req.body);
-        const result = await BikeServices.createBikeIntoDB(validatedBikeData);
-
+        const result = await BikeServices.createBikeIntoDB(req.body);
         res.status(httpStatus.OK).json({
             success: true,
             statusCode: httpStatus.OK,
@@ -23,6 +21,9 @@ const createBike = async (req: ExtendedRequest, res: Response, next: NextFunctio
 const getAllBikes = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
     try {
         const result = await BikeServices.getAllBikesFromDB();
+        if (!result.length) {
+            throw new AppError(httpStatus.NO_CONTENT, 'No Data Found');
+        }
         res.status(httpStatus.OK).json({
             success: true,
             statusCode: httpStatus.OK,

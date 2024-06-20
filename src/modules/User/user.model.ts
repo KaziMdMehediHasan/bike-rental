@@ -2,6 +2,8 @@ import { Schema, model } from "mongoose";
 import { TUser } from "./user.interface";
 import bcrypt from "bcrypt";
 import config from "../../config";
+import AppError from "../../errors/AppError";
+import httpStatus from "http-status";
 
 const UserSchema = new Schema<TUser>({
     name: {
@@ -10,6 +12,7 @@ const UserSchema = new Schema<TUser>({
     },
     email: {
         type: "string",
+        unique: true,
         required: true
     },
     password: {
@@ -51,8 +54,17 @@ const UserSchema = new Schema<TUser>({
     // }
 })
 
+//checking if there's already an existing user with the same email
+// UserSchema.pre('save', async function (next) {
+//     const isUserExist = await Users.findOne({ email: this.email });
+//     if (isUserExist) {
+//         throw new AppError(httpStatus.NOT_ACCEPTABLE, 'A user with the same email already exists');
+//     }
+//     next();
+// })
 // hashing the password before saving to the database
 UserSchema.pre('save', async function (next) {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const user = this;
     user.password = await bcrypt.hash(
         user?.password,

@@ -1,14 +1,11 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Response } from "express";
 import { UserServices } from "./user.service";
 import { userValidation } from "./user.validation";
-import { TUser } from "./user.interface";
 import httpStatus from "http-status";
-import { Users } from "./user.model";
 import { ExtendedRequest } from "../../interface";
 
 const getAllUsers = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
     try {
-        console.log('test', req.user)
         const result = await UserServices.getAllUsersFromDB();
         res.status(201).json({
             success: true,
@@ -38,37 +35,6 @@ const getUserProfile = async (req: ExtendedRequest, res: Response, next: NextFun
     }
 }
 
-const createNewUser = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
-    try {
-        const validatedUserData = userValidation.createUserValidationSchema.parse(req.body);
-        const result = await UserServices.createNewUserIntoDB(validatedUserData);
-        const responseObject = result.toObject();
-        const copiedResponse = { ...responseObject };
-        const { password, ...rest } = copiedResponse;
-
-        // sending an optimized response that doesn't expose the password to anyone
-        const optimizedResponse = {
-            _id: rest._id,
-            name: rest.name,
-            email: rest.email,
-            phone: rest.phone,
-            address: rest.address,
-            role: rest.role,
-            createdAt: rest.createdAt,
-            updatedAt: rest.updatedAt,
-            __v: rest.__v
-        }
-        res.status(201).json({
-            success: true,
-            statusCode: 201,
-            message: "User registered successfully",
-            data: optimizedResponse
-        })
-    } catch (err) {
-        next(err);
-    }
-
-}
 
 const updateUserProfile = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
     try {
@@ -101,26 +67,8 @@ const updateUserProfile = async (req: ExtendedRequest, res: Response, next: Next
     }
 }
 
-const loginUser = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
-    try {
-        const validatedCredentials = userValidation.loginValidationSchema.parse(req.body);
-        const result = await UserServices.loginUserIntoDB(validatedCredentials);
-        res.status(httpStatus.OK).json({
-            success: true,
-            statusCode: httpStatus.OK,
-            message: 'User logged in successfully',
-            token: result.accessToken,
-            data: result.desiredUserData
-        })
-    } catch (err) {
-        next(err)
-    }
-}
-
 export const UserControllers = {
     getUserProfile,
-    createNewUser,
-    loginUser,
     getAllUsers,
     updateUserProfile
 }

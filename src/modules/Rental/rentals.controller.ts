@@ -3,6 +3,7 @@ import { ExtendedRequest } from "../../interface";
 import { RentalsServices } from "./rentals.service";
 import { TRental } from "./rentals.interface";
 import httpStatus from "http-status";
+import AppError from "../../errors/AppError";
 
 const rentBike = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
     const { bikeId, startTime } = req.body;
@@ -54,6 +55,14 @@ const returnBike = async (req: ExtendedRequest, res: Response, next: NextFunctio
 const getAllRentals = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
     try {
         const result = await RentalsServices.getAllRentalsFromDB(req.user?.userId);
+        if (!result.length) {
+            throw new AppError(httpStatus.NO_CONTENT, 'No Data Found');
+            // return res.status(httpStatus.NO_CONTENT).json({
+            //     success: false,
+            //     message: 'No data found',
+            //     data: []
+            // })
+        }
         res.status(httpStatus.OK).json({
             success: true,
             statusCode: httpStatus.OK,
