@@ -1,6 +1,6 @@
 import { NextFunction, Response } from "express";
 import { UserServices } from "./user.service";
-import { userValidation } from "./user.validation";
+// import { userValidation } from "./user.validation";
 import httpStatus from "http-status";
 import { ExtendedRequest } from "../../interface";
 
@@ -51,8 +51,8 @@ const updateUserProfile = async (req: ExtendedRequest, res: Response, next: Next
                 message: 'Request can not be processed'
             })
         } else {
-            const updatedUserProfileData = userValidation.userValidationUpdateSchema.parse(req.body);
-            const result = await UserServices.updateUserProfileIntoDB(userId, updatedUserProfileData);
+            // const updatedUserProfileData = userValidation.userValidationUpdateSchema.parse(req.body);
+            const result = await UserServices.updateUserProfileIntoDB(userId, req.body);
 
             res.status(200).json({
                 success: true,

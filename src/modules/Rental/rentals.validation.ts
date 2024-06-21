@@ -1,5 +1,3 @@
-// import { Types } from 'mongoose';
-import { Types } from 'mongoose';
 import { z } from 'zod';
 
 // const bikeRentValidationSchema = z.object({

@@ -2,6 +2,7 @@ import { NextFunction, Response } from "express";
 import { ExtendedRequest } from "../../interface";
 import { AuthServices } from "./auth.service";
 import httpStatus from "http-status";
+import AppError from "../../errors/AppError";
 
 
 const createNewUser = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
@@ -12,6 +13,11 @@ const createNewUser = async (req: ExtendedRequest, res: Response, next: NextFunc
         const copiedResponse = { ...responseObject };
         // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
         const { password, ...rest } = copiedResponse;
+
+        // using type guard to avoid error
+        if (!rest?.createdAt || !rest?.updatedAt || rest?.__v === undefined) {
+            throw new AppError(httpStatus.NO_CONTENT, "Not Found");
+        }
 
         // sending an optimized response that doesn't expose the password to anyone
         const optimizedResponse = {

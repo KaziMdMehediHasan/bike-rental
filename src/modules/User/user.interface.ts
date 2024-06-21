@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { USER_ROLE } from "./user.constant";
 
 export type TUser = {

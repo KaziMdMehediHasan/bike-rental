@@ -2,8 +2,6 @@ import { Schema, model } from "mongoose";
 import { TUser } from "./user.interface";
 import bcrypt from "bcrypt";
 import config from "../../config";
-import AppError from "../../errors/AppError";
-import httpStatus from "http-status";
 
 const UserSchema = new Schema<TUser>({
     name: {

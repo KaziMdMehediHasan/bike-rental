@@ -1,6 +1,7 @@
 
 import { TErrorMessages } from "../interface/error";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const handleDuplicateKeyError = (err: any) => {
     // const match = err?.message.match(/"([^"]*)"/);
     // const extractedMessage = match && match[1];
