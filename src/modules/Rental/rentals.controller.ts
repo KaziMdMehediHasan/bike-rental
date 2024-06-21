@@ -4,6 +4,9 @@ import { RentalsServices } from "./rentals.service";
 import { TRental } from "./rentals.interface";
 import httpStatus from "http-status";
 import AppError from "../../errors/AppError";
+import { RentalsValidations } from "./rentals.validation";
+import { Types } from "mongoose";
+// import { Rentals } from "./rentals.model";
 
 const rentBike = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
     const { bikeId, startTime } = req.body;
@@ -13,9 +16,29 @@ const rentBike = async (req: ExtendedRequest, res: Response, next: NextFunction)
         startTime: startTime
     }
     try {
-        // const validatedRentData = RentalsValidations.bikeRentValidationSchema.parse(rentalData);
-        const result = await RentalsServices.rentBikeToDB(rentalData);
+        const validatedRentData = RentalsValidations.bikeRentValidationSchema.parse(rentalData);
 
+        // the following codes up until result is a fix for type conflict
+        // Checking whether userId and bikeId are valid ObjectId strings. This will help fix the compile error
+        if (!Types.ObjectId.isValid(validatedRentData.userId) || !Types.ObjectId.isValid(validatedRentData.bikeId)) {
+            throw new Error('Invalid ObjectId');
+        }
+        // Convert string IDs to Types.ObjectId so that interface and zod type do not conflict
+        const userId = new Types.ObjectId(validatedRentData.userId);
+        const bikeId = new Types.ObjectId(validatedRentData.bikeId);
+
+        // create a new rental data that does not conflict with zod 
+
+        const newRental = {
+            userId: userId,
+            bikeId: bikeId,
+            startTime: new Date(validatedRentData.startTime)
+        };
+
+        // finally sending the data to the service to create a new rental
+        const result = await RentalsServices.rentBikeToDB(newRental);
+
+        // formatting the response data as per client's requirement
         const formattedResponseData = {
             _id: result?._id,
             userId: result?.userId,
@@ -57,11 +80,6 @@ const getAllRentals = async (req: ExtendedRequest, res: Response, next: NextFunc
         const result = await RentalsServices.getAllRentalsFromDB(req.user?.userId);
         if (!result.length) {
             throw new AppError(httpStatus.NO_CONTENT, 'No Data Found');
-            // return res.status(httpStatus.NO_CONTENT).json({
-            //     success: false,
-            //     message: 'No data found',
-            //     data: []
-            // })
         }
         res.status(httpStatus.OK).json({
             success: true,
