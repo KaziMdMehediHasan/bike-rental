@@ -5,18 +5,20 @@ import { ExtendedRequest } from "../interface";
 import { TUserRole } from "../modules/User/user.interface";
 import AppError from "../errors/AppError";
 import httpStatus from "http-status";
+import formatToken from "../utils/formatToken";
 
 
 const auth = (...requiredRoles: TUserRole[]) => {
     return async (req: ExtendedRequest, res: Response, next: NextFunction) => {
         try {
             const token = req.headers.authorization;
+            const formattedToken = formatToken(token as string);
             // check if the token is sent by the client
-            if (!token) {
+            if (!formattedToken) {
                 throw new AppError(httpStatus.UNAUTHORIZED, "You have no access to this route");
             }
             // check if the token is valid
-            jwt.verify(token, config.jwt_access_secret as string, function (err, decoded) {
+            jwt.verify(formattedToken, config.jwt_access_secret as string, function (err, decoded) {
                 // err
                 if (err) {
                     throw new AppError(httpStatus.UNAUTHORIZED, "You have no access to this route");

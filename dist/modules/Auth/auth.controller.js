@@ -26,6 +26,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthControllers = void 0;
 const auth_service_1 = require("./auth.service");
 const http_status_1 = __importDefault(require("http-status"));
+const AppError_1 = __importDefault(require("../../errors/AppError"));
 const createNewUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // const validatedUserData = userValidation.createUserValidationSchema.parse(req.body);
@@ -34,6 +35,10 @@ const createNewUser = (req, res, next) => __awaiter(void 0, void 0, void 0, func
         const copiedResponse = Object.assign({}, responseObject);
         // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
         const { password } = copiedResponse, rest = __rest(copiedResponse, ["password"]);
+        // using type guard to avoid error
+        if (!(rest === null || rest === void 0 ? void 0 : rest.createdAt) || !(rest === null || rest === void 0 ? void 0 : rest.updatedAt) || (rest === null || rest === void 0 ? void 0 : rest.__v) === undefined) {
+            throw new AppError_1.default(http_status_1.default.NO_CONTENT, "Not Found");
+        }
         // sending an optimized response that doesn't expose the password to anyone
         const optimizedResponse = {
             _id: rest._id,

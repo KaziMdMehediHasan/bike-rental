@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserControllers = void 0;
 const user_service_1 = require("./user.service");
-const user_validation_1 = require("./user.validation");
+// import { userValidation } from "./user.validation";
 const http_status_1 = __importDefault(require("http-status"));
 const getAllUsers = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -63,8 +63,8 @@ const updateUserProfile = (req, res, next) => __awaiter(void 0, void 0, void 0, 
             });
         }
         else {
-            const updatedUserProfileData = user_validation_1.userValidation.userValidationUpdateSchema.parse(req.body);
-            const result = yield user_service_1.UserServices.updateUserProfileIntoDB(userId, updatedUserProfileData);
+            // const updatedUserProfileData = userValidation.userValidationUpdateSchema.parse(req.body);
+            const result = yield user_service_1.UserServices.updateUserProfileIntoDB(userId, req.body);
             res.status(200).json({
                 success: true,
                 statusCode: 200,

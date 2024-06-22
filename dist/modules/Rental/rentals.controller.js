@@ -16,6 +16,9 @@ exports.RentalsControllers = void 0;
 const rentals_service_1 = require("./rentals.service");
 const http_status_1 = __importDefault(require("http-status"));
 const AppError_1 = __importDefault(require("../../errors/AppError"));
+const rentals_validation_1 = require("./rentals.validation");
+const mongoose_1 = require("mongoose");
+// import { Rentals } from "./rentals.model";
 const rentBike = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const { bikeId, startTime } = req.body;
@@ -25,8 +28,24 @@ const rentBike = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
         startTime: startTime
     };
     try {
-        // const validatedRentData = RentalsValidations.bikeRentValidationSchema.parse(rentalData);
-        const result = yield rentals_service_1.RentalsServices.rentBikeToDB(rentalData);
+        const validatedRentData = rentals_validation_1.RentalsValidations.bikeRentValidationSchema.parse(rentalData);
+        // the following codes up until result is a fix for type conflict
+        // Checking whether userId and bikeId are valid ObjectId strings. This will help fix the compile error
+        if (!mongoose_1.Types.ObjectId.isValid(validatedRentData.userId) || !mongoose_1.Types.ObjectId.isValid(validatedRentData.bikeId)) {
+            throw new Error('Invalid ObjectId');
+        }
+        // Convert string IDs to Types.ObjectId so that interface and zod type do not conflict
+        const userId = new mongoose_1.Types.ObjectId(validatedRentData.userId);
+        const bikeId = new mongoose_1.Types.ObjectId(validatedRentData.bikeId);
+        // create a new rental data that does not conflict with zod 
+        const newRental = {
+            userId: userId,
+            bikeId: bikeId,
+            startTime: new Date(validatedRentData.startTime)
+        };
+        // finally sending the data to the service to create a new rental
+        const result = yield rentals_service_1.RentalsServices.rentBikeToDB(newRental);
+        // formatting the response data as per client's requirement
         const formattedResponseData = {
             _id: result === null || result === void 0 ? void 0 : result._id,
             userId: result === null || result === void 0 ? void 0 : result.userId,
@@ -67,11 +86,6 @@ const getAllRentals = (req, res, next) => __awaiter(void 0, void 0, void 0, func
         const result = yield rentals_service_1.RentalsServices.getAllRentalsFromDB((_b = req.user) === null || _b === void 0 ? void 0 : _b.userId);
         if (!result.length) {
             throw new AppError_1.default(http_status_1.default.NO_CONTENT, 'No Data Found');
-            // return res.status(httpStatus.NO_CONTENT).json({
-            //     success: false,
-            //     message: 'No data found',
-            //     data: []
-            // })
         }
         res.status(http_status_1.default.OK).json({
             success: true,
