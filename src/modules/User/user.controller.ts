@@ -4,18 +4,18 @@ import { UserServices } from "./user.service";
 import httpStatus from "http-status";
 import { ExtendedRequest } from "../../interface";
 
-const getAllUsers = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
-    try {
-        const result = await UserServices.getAllUsersFromDB();
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            message: result
-        })
-    } catch (err) {
-        next(err);
-    }
-}
+// const getAllUsers = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
+//     try {
+//         const result = await UserServices.getAllUsersFromDB();
+//         res.status(200).json({
+//             success: true,
+//             statusCode: 200,
+//             message: result
+//         })
+//     } catch (err) {
+//         next(err);
+//     }
+// }
 const getUserProfile = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
     try {
         let userId: string = '';
@@ -69,6 +69,5 @@ const updateUserProfile = async (req: ExtendedRequest, res: Response, next: Next
 
 export const UserControllers = {
     getUserProfile,
-    getAllUsers,
     updateUserProfile
 }

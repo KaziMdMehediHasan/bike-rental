@@ -2,10 +2,10 @@ import { TUser } from "./user.interface";
 import { Users } from "./user.model";
 
 
-const getAllUsersFromDB = async () => {
-    const users = await Users.find({}).select("-password");
-    return users;
-}
+// const getAllUsersFromDB = async () => {
+//     const users = await Users.find({}).select("-password");
+//     return users;
+// }
 const getUserFromDB = async (payload: string) => {
     const profile = await Users.findById({ _id: payload }).select("-password");
     return profile;
@@ -22,6 +22,5 @@ const updateUserProfileIntoDB = async (id: string, payload: Partial<TUser>) => {
 
 export const UserServices = {
     getUserFromDB,
-    getAllUsersFromDB,
     updateUserProfileIntoDB
 }
