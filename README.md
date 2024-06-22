@@ -66,7 +66,8 @@ The server should now be running at http://localhost:YOUR_PORT
 
 ### User Routes
 
-- Sign Up
+#### Sign Up
+
 - Route:
 
 ```sh
@@ -86,7 +87,8 @@ The server should now be running at http://localhost:YOUR_PORT
 }
 ```
 
-- Login
+#### Login
+
 - Route:
 
 ```sh
@@ -102,7 +104,8 @@ The server should now be running at http://localhost:YOUR_PORT
 }
 ```
 
-- Get Profile
+#### Get Profile
+
 - Route:
 
 ```sh
@@ -111,7 +114,8 @@ The server should now be running at http://localhost:YOUR_PORT
 
 - Headers: Authorization: Bearer jwt_token
 
-- Update Profile
+#### Update Profile
+
 - Route:
 
 ```sh
@@ -129,8 +133,10 @@ Request Body:
 }
 ```
 
-- Bike Routes
-- Create Bike (Admin Only)
+### Bike Routes
+
+#### Create Bike (Admin Only)
+
 - Route:
 
 ```sh
@@ -153,14 +159,16 @@ Request Body:
 }
 ```
 
-- Get All Bikes
+#### Get All Bikes
+
 - Route:
 
 ```sh
 /api/bikes (GET)
 ```
 
-- Update Bike (Admin Only)
+#### Update Bike (Admin Only)
+
 - Route:
 
 ```sh
@@ -177,7 +185,8 @@ Request Body:
 }
 ```
 
-- Delete Bike (Admin Only)
+#### Delete Bike (Admin Only)
+
 - Route:
 
 ```sh
@@ -186,8 +195,10 @@ Request Body:
 
 - Headers: Authorization: Bearer jwt_token
 
-- Rental Routes
-- Create Rental
+### Rental Routes
+
+#### Create Rental
+
 - Route:
 
 ```sh
@@ -205,7 +216,8 @@ Request Body:
 }
 ```
 
-- Return Bike (Admin Only)
+#### Return Bike (Admin Only)
+
 - Route:
 
 ```sh
@@ -214,7 +226,8 @@ Request Body:
 
 - Headers: Authorization: Bearer jwt_token
 
-- Get All Rentals for User
+#### Get All Rentals for User
+
 - Route:
 
 ```sh
