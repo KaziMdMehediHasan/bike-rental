@@ -23,6 +23,10 @@ const createBikeSchema = new mongoose_1.Schema({
         type: "number",
         required: true
     },
+    year: {
+        type: "number",
+        required: true
+    },
     model: {
         type: "string",
         required: true

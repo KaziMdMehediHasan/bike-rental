@@ -22,6 +22,10 @@ const createBikeSchema = new Schema<TBike>({
         type: "number",
         required: true
     },
+    year: {
+        type: "number",
+        required: true
+    },
     model: {
         type: "string",
         required: true
