@@ -9,8 +9,6 @@ const getAllUsersFromDB = async () => {
 const getUserFromDB = async (payload: string) => {
     const profile = await Users.findById({ _id: payload }).select("-password");
     return profile;
-    // console.log('From user service');
-    // return await `User Route is hit`;
 }
 const updateUserProfileIntoDB = async (id: string, payload: Partial<TUser>) => {
     // console.log(id, payload);

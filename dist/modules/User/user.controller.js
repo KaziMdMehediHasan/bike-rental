@@ -19,9 +19,9 @@ const http_status_1 = __importDefault(require("http-status"));
 const getAllUsers = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const result = yield user_service_1.UserServices.getAllUsersFromDB();
-        res.status(201).json({
+        res.status(200).json({
             success: true,
-            statusCode: 201,
+            statusCode: 200,
             message: result
         });
     }
@@ -37,9 +37,9 @@ const getUserProfile = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
             userId = req.user.userId;
         }
         const result = yield user_service_1.UserServices.getUserFromDB(userId);
-        res.status(201).json({
+        res.status(200).json({
             success: true,
-            statusCode: 201,
+            statusCode: 200,
             message: "User profile retrieved successfully",
             data: result
         });

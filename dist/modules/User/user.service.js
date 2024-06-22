@@ -18,8 +18,6 @@ const getAllUsersFromDB = () => __awaiter(void 0, void 0, void 0, function* () {
 const getUserFromDB = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const profile = yield user_model_1.Users.findById({ _id: payload }).select("-password");
     return profile;
-    // console.log('From user service');
-    // return await `User Route is hit`;
 });
 const updateUserProfileIntoDB = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
     // console.log(id, payload);

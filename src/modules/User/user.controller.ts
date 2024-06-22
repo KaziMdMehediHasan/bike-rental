@@ -7,9 +7,9 @@ import { ExtendedRequest } from "../../interface";
 const getAllUsers = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
     try {
         const result = await UserServices.getAllUsersFromDB();
-        res.status(201).json({
+        res.status(200).json({
             success: true,
-            statusCode: 201,
+            statusCode: 200,
             message: result
         })
     } catch (err) {
@@ -24,9 +24,9 @@ const getUserProfile = async (req: ExtendedRequest, res: Response, next: NextFun
             userId = req.user.userId;
         }
         const result = await UserServices.getUserFromDB(userId);
-        res.status(201).json({
+        res.status(200).json({
             success: true,
-            statusCode: 201,
+            statusCode: 200,
             message: "User profile retrieved successfully",
             data: result
         })
