@@ -69,8 +69,8 @@ The server should now be running at http://localhost:YOUR_PORT
 - Sign Up
 - Route:
 
-```/api/auth/signup (POST)
-
+```sh
+/api/auth/signup (POST)
 ```
 
 - Request Body:
@@ -89,8 +89,8 @@ The server should now be running at http://localhost:YOUR_PORT
 - Login
 - Route:
 
-```/api/auth/login (POST)
-
+```sh
+/api/auth/login (POST)
 ```
 
 - Request Body:
@@ -105,8 +105,8 @@ The server should now be running at http://localhost:YOUR_PORT
 - Get Profile
 - Route:
 
-```/api/users/me (GET)
-
+```sh
+/api/users/me (GET)
 ```
 
 - Headers: Authorization: Bearer jwt_token
@@ -114,8 +114,8 @@ The server should now be running at http://localhost:YOUR_PORT
 - Update Profile
 - Route:
 
-```/api/users/me (PUT)
-
+```sh
+/api/users/me (PUT)
 ```
 
 - Headers: Authorization: Bearer jwt_token
@@ -133,8 +133,8 @@ Request Body:
 - Create Bike (Admin Only)
 - Route:
 
-```/api/bikes (POST)
-
+```sh
+/api/bikes (POST)
 ```
 
 - Headers: Authorization: Bearer jwt_token
@@ -156,15 +156,15 @@ Request Body:
 - Get All Bikes
 - Route:
 
-```/api/bikes (GET)
-
+```sh
+/api/bikes (GET)
 ```
 
 - Update Bike (Admin Only)
 - Route:
 
-```/api/bikes/:id (PUT)
-
+```sh
+/api/bikes/:id (PUT)
 ```
 
 - Headers: Authorization: Bearer jwt_token
@@ -180,8 +180,8 @@ Request Body:
 - Delete Bike (Admin Only)
 - Route:
 
-```/api/bikes/:id (DELETE)
-
+```sh
+/api/bikes/:id (DELETE)
 ```
 
 - Headers: Authorization: Bearer jwt_token
@@ -190,8 +190,8 @@ Request Body:
 - Create Rental
 - Route:
 
-```/api/rentals (POST)
-
+```sh
+/api/rentals (POST)
 ```
 
 - Headers: Authorization: Bearer jwt_token
@@ -208,8 +208,8 @@ Request Body:
 - Return Bike (Admin Only)
 - Route:
 
-```/api/rentals/:id/return (PUT)
-
+```sh
+/api/rentals/:id/return (PUT)
 ```
 
 - Headers: Authorization: Bearer jwt_token
@@ -217,8 +217,8 @@ Request Body:
 - Get All Rentals for User
 - Route:
 
-```/api/rentals (GET)
-
+```sh
+/api/rentals (GET)
 ```
 
 - Headers: Authorization: Bearer jwt_token
