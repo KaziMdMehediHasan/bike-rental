@@ -29,7 +29,6 @@ const UserSchema = new mongoose_1.Schema({
     password: {
         type: "string",
         required: true,
-        // select: false
     },
     phone: {
         type: "string",
@@ -64,6 +63,7 @@ const UserSchema = new mongoose_1.Schema({
     //     }
     // }
 });
+//the following code block is commented out to show examiner the desired error message from the mongoose validation
 //checking if there's already an existing user with the same email
 // UserSchema.pre('save', async function (next) {
 //     const isUserExist = await Users.findOne({ email: this.email });

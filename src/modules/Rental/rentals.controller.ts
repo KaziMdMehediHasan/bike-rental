@@ -18,25 +18,25 @@ const rentBike = async (req: ExtendedRequest, res: Response, next: NextFunction)
     try {
         const validatedRentData = RentalsValidations.bikeRentValidationSchema.parse(rentalData);
 
-        // the following codes up until result is a fix for type conflict
-        // Checking whether userId and bikeId are valid ObjectId strings. This will help fix the compile error
+        // the following codes up until result, is a fix for type conflict
+        // Checking whether userId and bikeId are valid ObjectId strings. This will help fix the typescript compile error
         if (!Types.ObjectId.isValid(validatedRentData.userId) || !Types.ObjectId.isValid(validatedRentData.bikeId)) {
-            throw new Error('Invalid ObjectId');
+            throw new AppError(httpStatus.NOT_FOUND, 'Invalid ObjectId');
         }
         // Convert string IDs to Types.ObjectId so that interface and zod type do not conflict
         const userId = new Types.ObjectId(validatedRentData.userId);
         const bikeId = new Types.ObjectId(validatedRentData.bikeId);
 
-        // create a new rental data that does not conflict with zod 
+        // creating a new rental data that does not conflict with zod 
 
-        const newRental = {
+        const newRentalData: TRental = {
             userId: userId,
             bikeId: bikeId,
             startTime: new Date(validatedRentData.startTime)
         };
 
         // finally sending the data to the service to create a new rental
-        const result = await RentalsServices.rentBikeToDB(newRental);
+        const result = await RentalsServices.rentBikeToDB(newRentalData);
 
         // formatting the response data as per client's requirement
         const formattedResponseData = {
