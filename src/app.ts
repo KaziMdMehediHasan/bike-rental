@@ -12,7 +12,7 @@ const corsOptions = {
 const app = express();
 
 // parsers
-app.use(express.json({ limit: "200mb" }));
+app.use(express.json({ limit: "200mb" })); //to allow base64 to be uploaded to mongodb database
 app.use(express.urlencoded({ extended: true, limit: "200mb" }));
 app.use(cors(corsOptions));
 

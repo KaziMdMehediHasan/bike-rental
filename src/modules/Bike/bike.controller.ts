@@ -35,6 +35,21 @@ const getAllBikes = async (req: ExtendedRequest, res: Response, next: NextFuncti
     }
 }
 
+const getSingleBike = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
+    try {
+        const result = await BikeServices.getSingleBikeFromDB(req.params.id);
+        res.status(httpStatus.OK).json({
+            success: true,
+            statusCode: httpStatus.OK,
+            message: 'Bike data retrieved successfully',
+            data: result
+        })
+    } catch (err) {
+        next(err);
+    }
+
+}
+
 const updateBike = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
     try {
         const result = await BikeServices.updateBikesIntoDB(req.params.id, req.body);
@@ -67,6 +82,7 @@ const deleteBike = async (req: ExtendedRequest, res: Response, next: NextFunctio
 export const BikeController = {
     createBike,
     getAllBikes,
+    getSingleBike,
     updateBike,
     deleteBike
 }
