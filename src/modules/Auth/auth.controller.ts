@@ -4,11 +4,12 @@ import { AuthServices } from "./auth.service";
 import httpStatus from "http-status";
 import AppError from "../../errors/AppError";
 
-
 const createNewUser = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
     try {
         // const validatedUserData = userValidation.createUserValidationSchema.parse(req.body);
-        const result = await AuthServices.createNewUserIntoDB(req.body);
+
+        const userInfo = { ...req.body, role: 'user' };
+        const result = await AuthServices.createNewUserIntoDB(userInfo);
         const responseObject = result.toObject();
         const copiedResponse = { ...responseObject };
         // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars

@@ -4,11 +4,17 @@ import globalErrorHandler from './middlewares/globalErrorHandler';
 import notFound from './middlewares/notFound';
 import router from './route';
 
+const corsOptions = {
+    origin: '*',
+    credentials: true,            //access-control-allow-credentials:true
+    optionSuccessStatus: 200,
+}
 const app = express();
 
 // parsers
-app.use(express.json())
-app.use(cors())
+app.use(express.json({ limit: "200mb" }));
+app.use(express.urlencoded({ extended: true, limit: "200mb" }));
+app.use(cors(corsOptions));
 
 
 app.get('/', (req, res) => {

@@ -28,6 +28,9 @@ const UserSchema = new Schema<TUser>({
         type: "string",
         enum: ['admin', 'user'],
         required: true
+    },
+    profileImg: {
+        type: "string",
     }
 }, {
     timestamps: true,

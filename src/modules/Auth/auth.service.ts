@@ -6,6 +6,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 const createNewUserIntoDB = async (payload: TUser) => {
+    // console.log('from auth service:', payload);
     const result = await Users.create(payload);
     return result;
 }
