@@ -79,10 +79,35 @@ const deleteBike = async (req: ExtendedRequest, res: Response, next: NextFunctio
     }
 
 }
+
+const postImgToCloudinary = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
+    // potential undefined type error fix
+    if (!req.file || !req.file.path) {
+        return res.status(400).json({
+            success: false,
+            statusCode: 400,
+            message: 'No file selected!',
+        });
+    }
+    // console.log('from controller:', req.file, req.file.path);
+    try {
+        const result = await BikeServices.uploadBikeImgToCloudinaryDB(req.file.path)
+        res.status(httpStatus.OK).json({
+            success: true,
+            statusCode: httpStatus.OK,
+            message: 'Image uploaded to cloudinary server successfully!',
+            data: result
+        })
+    } catch (err) {
+        next(err);
+    }
+
+}
 export const BikeController = {
     createBike,
     getAllBikes,
     getSingleBike,
     updateBike,
-    deleteBike
+    deleteBike,
+    postImgToCloudinary
 }

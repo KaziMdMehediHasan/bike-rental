@@ -3,6 +3,7 @@ import cors from 'cors';
 import globalErrorHandler from './middlewares/globalErrorHandler';
 import notFound from './middlewares/notFound';
 import router from './route';
+import { v2 as cloudinary } from 'cloudinary';
 
 const corsOptions = {
     origin: '*',
@@ -16,6 +17,13 @@ app.use(express.json({ limit: "200mb" })); //to allow base64 to be uploaded to m
 app.use(express.urlencoded({ extended: true, limit: "200mb" }));
 app.use(cors(corsOptions));
 
+// Cloudinary configuration
+/* eslint-disable no-undef */
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 app.get('/', (req, res) => {
     res.send('Welcome to assignment 3 server')
