@@ -70,6 +70,17 @@ const updateBike = async (req: ExtendedRequest, res: Response, next: NextFunctio
     // payload = { year: req.body.bikeData, img: req.file?.path }
     // console.log(payload);
     console.log('recieved data in backend:', req.body, req.file);
+
+    try {
+        if (req.file) {
+            cloudinaryRes = await cloudinary.uploader.upload(req.file.path, {
+                folder: 'bike_images'
+            });
+        }
+        console.log('from controller:', cloudinaryRes);
+    } catch (err) {
+        next(err);
+    }
     // try {
     //     if (req.file?.path) {
     //         const imgUploadResult = await cloudinary.uploader.upload(req.file?.path, {
