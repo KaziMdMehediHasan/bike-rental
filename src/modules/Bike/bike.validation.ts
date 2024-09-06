@@ -9,7 +9,8 @@ const createBikeValidationSchema = z.object({
         cc: z.number({ required_error: "CC is required" }),
         year: z.number({ required_error: "Year is required" }),
         model: z.string().min(1, { message: "Model is required" }),
-        brand: z.string().min(1, { message: "Brand is required" })
+        brand: z.string().min(1, { message: "Brand is required" }),
+        img: z.string().optional()
     })
 
 })
@@ -22,7 +23,7 @@ const updateBikeValidationSchema = z.object({
         cc: z.number().optional(),
         year: z.number().optional(),
         model: z.string().optional(),
-        brand: z.string().optional()
+        brand: z.string().optional(),
     }).optional()
 
 })

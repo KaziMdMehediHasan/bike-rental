@@ -16,6 +16,7 @@ const getSingleBikeFromDB = async (payload: string) => {
     return result;
 }
 const updateBikesIntoDB = async (id: string, payload: Partial<TBike>) => {
+
     const result = Bikes.findByIdAndUpdate(
         { _id: id },
         payload,
