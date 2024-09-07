@@ -16,15 +16,15 @@ router.get("/", BikeController.getAllBikes);
 router.get("/:id", BikeController.getSingleBike);
 router.put("/:id", validateRequest(BikeValidation.updateBikeValidationSchema), auth(USER_ROLE.admin), upload.single('img'),
     // (req: ExtendedRequest, res: Response, next: NextFunction) => {
-    //     console.log('coming from middleware:', req.body, req.file);
-    //     if (req.body?.bikeInfo) {
-    //         req.body = JSON.parse(req.body?.bikeInfo);
+    //     if (req.body?.cc || req.body?.year) {
+    //         if (req.body?.year) req.body = { ...req.body, year: Number(req.body.year) };
+    //         if (req.body?.cc) req.body = { ...req.body, cc: Number(req.body.cc) };
+    //         console.log('coming from middleware:', req.body);
     //         next();
     //     } else {
     //         throw new AppError(httpStatus.BAD_REQUEST, "Please provide user data");
     //     }
     // },
-
     BikeController.updateBike);
 // validateRequest(BikeValidation.updateBikeValidationSchema)
 router.delete("/:id", auth(USER_ROLE.admin), BikeController.deleteBike);

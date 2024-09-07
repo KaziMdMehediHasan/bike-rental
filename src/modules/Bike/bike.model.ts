@@ -33,6 +33,9 @@ const createBikeSchema = new Schema<TBike>({
     brand: {
         type: "string",
         required: true
+    },
+    img: {
+        type: "string",
     }
 }, { versionKey: false })
 
