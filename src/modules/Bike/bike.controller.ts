@@ -8,7 +8,21 @@ import { TBike, TCloudinaryRes } from "./bike.interface";
 
 const createBike = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
     try {
-        const result = await BikeServices.createBikeIntoDB(req.body);
+        // console.log(req.body, req.file);
+        let cloudinaryRes: TCloudinaryRes = {};
+        const payload: TBike = { ...req.body };
+
+        if (req.body.year) payload.year = Number(req.body.year);
+        if (req.body.cc) payload.cc = Number(req.body.cc);
+        if (req.body.pricePerHour) payload.pricePerHour = Number(req.body.pricePerHour);
+        if (req.body.isAvailable) payload.isAvailable = req.body.isAvailable === 'false' ? false : true;
+        if (req.file) {
+            cloudinaryRes = await cloudinary.uploader.upload(req.file.path, {
+                folder: 'bike_images'
+            });
+            payload.img = cloudinaryRes.url;
+        }
+        const result = await BikeServices.createBikeIntoDB(payload);
         res.status(httpStatus.OK).json({
             success: true,
             statusCode: httpStatus.OK,
@@ -59,6 +73,7 @@ const updateBike = async (req: ExtendedRequest, res: Response, next: NextFunctio
 
         if (req.body.year) payload.year = Number(req.body.year);
         if (req.body.cc) payload.cc = Number(req.body.cc);
+        if (req.body.pricePerHour) payload.pricePerHour = Number(req.body.pricePerHour);
         if (req.body.isAvailable) payload.isAvailable = req.body.isAvailable === 'true' ? true : false;
         if (req.file) {
             cloudinaryRes = await cloudinary.uploader.upload(req.file.path, {
@@ -66,7 +81,7 @@ const updateBike = async (req: ExtendedRequest, res: Response, next: NextFunctio
             });
             payload.img = cloudinaryRes.url;
         }
-        console.log(payload);
+        // console.log(payload);
         const result = await BikeServices.updateBikesIntoDB(req.params.id, payload);
         res.status(httpStatus.OK).json({
             success: true,
@@ -95,34 +110,34 @@ const deleteBike = async (req: ExtendedRequest, res: Response, next: NextFunctio
 
 }
 
-const postImgToCloudinary = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
-    // potential undefined type error fix
-    if (!req.file || !req.file.path) {
-        return res.status(400).json({
-            success: false,
-            statusCode: 400,
-            message: 'No file selected!',
-        });
-    }
-    // console.log('from controller:', req.file, req.file.path);
-    try {
-        const result = await BikeServices.uploadBikeImgToCloudinaryDB(req.file.path)
-        res.status(httpStatus.OK).json({
-            success: true,
-            statusCode: httpStatus.OK,
-            message: 'Image uploaded to cloudinary server successfully!',
-            data: result
-        })
-    } catch (err) {
-        next(err);
-    }
+// const postImgToCloudinary = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
+//     // potential undefined type error fix
+//     if (!req.file || !req.file.path) {
+//         return res.status(400).json({
+//             success: false,
+//             statusCode: 400,
+//             message: 'No file selected!',
+//         });
+//     }
+//     // console.log('from controller:', req.file, req.file.path);
+//     try {
+//         const result = await BikeServices.uploadBikeImgToCloudinaryDB(req.file.path)
+//         res.status(httpStatus.OK).json({
+//             success: true,
+//             statusCode: httpStatus.OK,
+//             message: 'Image uploaded to cloudinary server successfully!',
+//             data: result
+//         })
+//     } catch (err) {
+//         next(err);
+//     }
 
-}
+// }
 export const BikeController = {
     createBike,
     getAllBikes,
     getSingleBike,
     updateBike,
     deleteBike,
-    postImgToCloudinary
+    // postImgToCloudinary
 }

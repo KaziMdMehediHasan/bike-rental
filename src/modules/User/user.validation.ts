@@ -7,7 +7,7 @@ const createUserValidationSchema = z.object({
         password: z.string(),
         phone: z.string(),
         address: z.string(),
-        // role: z.enum(['admin', 'user']).optional()
+        role: z.enum(['admin', 'user']).optional()
     })
 })
 const userValidationUpdateSchema = z.object({

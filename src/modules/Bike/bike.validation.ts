@@ -12,7 +12,6 @@ const createBikeValidationSchema = z.object({
         brand: z.string().min(1, { message: "Brand is required" }),
         img: z.string().optional()
     })
-
 })
 const updateBikeValidationSchema = z.object({
     body: z.object({

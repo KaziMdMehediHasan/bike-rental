@@ -15,6 +15,8 @@ const rentBike = async (req: ExtendedRequest, res: Response, next: NextFunction)
         bikeId: bikeId,
         startTime: startTime
     }
+
+    // console.log(req.user, req.body);
     try {
         const validatedRentData = RentalsValidations.bikeRentValidationSchema.parse(rentalData);
 

@@ -1,6 +1,6 @@
 import { TBike } from "./bike.interface";
 import { Bikes } from "./bike.model";
-import { v2 as cloudinary } from 'cloudinary';
+// import { v2 as cloudinary } from 'cloudinary';
 
 const createBikeIntoDB = async (payload: TBike) => {
     const result = await Bikes.create(payload);
@@ -28,13 +28,13 @@ const deleteBikesFromDB = async (id: string) => {
     return result;
 }
 
-const uploadBikeImgToCloudinaryDB = async (payload: string) => {
-    // console.log('From service', payload);
-    const result = await cloudinary.uploader.upload(payload, {
-        folder: 'bike_images'
-    });
-    return result;
-}
+// const uploadBikeImgToCloudinaryDB = async (payload: string) => {
+//     // console.log('From service', payload);
+//     const result = await cloudinary.uploader.upload(payload, {
+//         folder: 'bike_images'
+//     });
+//     return result;
+// }
 
 export const BikeServices = {
     createBikeIntoDB,
@@ -42,5 +42,5 @@ export const BikeServices = {
     getSingleBikeFromDB,
     updateBikesIntoDB,
     deleteBikesFromDB,
-    uploadBikeImgToCloudinaryDB
+    // uploadBikeImgToCloudinaryDB
 }
