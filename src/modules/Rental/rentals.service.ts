@@ -118,7 +118,8 @@ const returnBikeToDB = async (payload: string) => {
 const getAllRentalsFromDB = async (payload: string) => {
     const result = await Rentals.find(
         { userId: payload }
-    );
+    )
+        .populate('bikeId').populate('userId');
     return result;
 }
 export const RentalsServices = {
