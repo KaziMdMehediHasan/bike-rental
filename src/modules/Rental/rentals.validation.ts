@@ -11,7 +11,8 @@ import { z } from 'zod';
 const bikeRentValidationSchema = z.object({
     userId: z.string(),
     bikeId: z.string(),
-    startTime: z.string().datetime()
+    startTime: z.string().datetime(),
+    paymentId: z.string().optional()
     // returnTime: z.string().datetime().nullable().default(null),
 })
 

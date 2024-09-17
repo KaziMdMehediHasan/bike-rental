@@ -39,6 +39,9 @@ const BikeRentalSchema = new Schema<TRental>({
     isReturned: {
         type: "boolean",
         default: false
+    },
+    paymentId: {
+        type: "string"
     }
 }, {
     versionKey: false
