@@ -15,27 +15,45 @@ const createPaymentIntent = async (req: ExtendedRequest, res: Response, next: Ne
     try {
         // creating a payment intent with $10 charge
         const paymentIntent = await stripe.paymentIntents.create({
-            amount: amount * 100,
+            amount: amount * 100, //stripe calculates the payment in cents
             currency: 'USD',
             payment_method_types: ['card']
         });
 
         if (!paymentIntent) {
-            throw new AppError(httpStatus.NOT_IMPLEMENTED, 'Payment creation unsuccessful')
+            throw new AppError(httpStatus.NOT_IMPLEMENTED, 'Payment creation unsuccessful');
         }
-        // console.log(paymentIntent);
-        // const paymentIntentStatus = await stripe.paymentIntents.retrieve(paymentIntent.client)
         res.status(httpStatus.OK).json({
             success: true,
             statusCode: httpStatus.OK,
             message: 'Payment created successfully',
-            data: paymentIntent
+            clientSecret: paymentIntent.client_secret
         });
     } catch (err) {
         next(err);
     }
 }
 
+// confirm the payment
+// const confirmPayment = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
+//     const { paymentId } = req.body;
+//     try {
+//         // retrieve payment intent to confirm it's successful
+//         const confirmation = await stripe.paymentIntents.retrieve(paymentId);
+//         if (confirmation.status === 'succeeded') {
+//             res.status(httpStatus.OK).json({
+//                 success: true,
+//                 statusCode: httpStatus.OK,
+//                 message: 'Payment confirmed successfully',
+//                 data: confirmation
+//             })
+//         }
+//     } catch (err) {
+//         next(err);
+//     }
+// }
+
 export const PaymentController = {
-    createPaymentIntent
+    createPaymentIntent,
+    // confirmPayment
 }
