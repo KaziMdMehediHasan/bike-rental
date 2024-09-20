@@ -12,7 +12,8 @@ const bikeRentValidationSchema = z.object({
     userId: z.string(),
     bikeId: z.string(),
     startTime: z.string().datetime(),
-    paymentId: z.string().optional()
+    advancePaymentId: z.string().optional(),
+    finalPaymentId: z.string().optional().default(''),
     // returnTime: z.string().datetime().nullable().default(null),
 })
 

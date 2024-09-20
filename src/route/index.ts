@@ -7,7 +7,6 @@ import { PaymentRoutes } from '../modules/Payment/payment.route';
 
 const router = express.Router();
 
-
 const moduleRoutes = [
     {
         path: '/users',

@@ -7,6 +7,7 @@ export type TRental = {
     returnTime?: Date | null;
     totalCost?: number;
     isReturned?: boolean;
-    paymentId?: string;
+    advancePaymentId?: string;
+    finalPaymentId?: string;
 }
 

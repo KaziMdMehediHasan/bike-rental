@@ -9,11 +9,13 @@ import { Types } from "mongoose";
 // import { Rentals } from "./rentals.model";
 
 const rentBike = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
-    const { bikeId, startTime } = req.body;
+    const { bikeId, startTime, advancePaymentId, finalPaymentId } = req.body;
     const rentalData: TRental = {
         userId: req.user?.userId,
         bikeId: bikeId,
-        startTime: startTime
+        startTime: startTime,
+        advancePaymentId: advancePaymentId,
+        finalPaymentId: finalPaymentId
     }
 
     // console.log(req.user, req.body);
@@ -34,7 +36,9 @@ const rentBike = async (req: ExtendedRequest, res: Response, next: NextFunction)
         const newRentalData: TRental = {
             userId: userId,
             bikeId: bikeId,
-            startTime: new Date(validatedRentData.startTime)
+            startTime: new Date(validatedRentData.startTime),
+            advancePaymentId: advancePaymentId,
+            finalPaymentId: finalPaymentId
         };
 
         // finally sending the data to the service to create a new rental

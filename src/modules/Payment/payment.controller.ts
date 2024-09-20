@@ -27,7 +27,8 @@ const createPaymentIntent = async (req: ExtendedRequest, res: Response, next: Ne
             success: true,
             statusCode: httpStatus.OK,
             message: 'Payment created successfully',
-            clientSecret: paymentIntent.client_secret
+            clientSecret: paymentIntent.client_secret,
+            paymentId: paymentIntent.id
         });
     } catch (err) {
         next(err);

@@ -40,8 +40,12 @@ const BikeRentalSchema = new Schema<TRental>({
         type: "boolean",
         default: false
     },
-    paymentId: {
+    advancePaymentId: {
         type: "string"
+    },
+    finalPaymentId: {
+        type: "string",
+        default: ''
     }
 }, {
     versionKey: false
