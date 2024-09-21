@@ -10,5 +10,5 @@ const router = express.Router();
 // router.post('/', validateRequest(RentalsValidations.bikeRentValidationSchema), auth(USER_ROLE.admin, USER_ROLE.user), RentalsControllers.rentBike);
 router.get('/', auth(USER_ROLE.admin, USER_ROLE.user), RentalsControllers.getAllRentals);
 router.post('/', auth(USER_ROLE.admin, USER_ROLE.user), RentalsControllers.rentBike);
-router.put('/:id/return', auth(USER_ROLE.admin), RentalsControllers.returnBike);
+router.put('/:id/return', auth(USER_ROLE.admin, USER_ROLE.user), RentalsControllers.returnBike);
 export const RentalsRoutes = router;

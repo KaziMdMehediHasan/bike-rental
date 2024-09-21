@@ -68,7 +68,8 @@ const rentBike = async (req: ExtendedRequest, res: Response, next: NextFunction)
 
 const returnBike = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
     try {
-        const result = await RentalsServices.returnBikeToDB(req.params.id);
+
+        const result = await RentalsServices.returnBikeToDB(req.body, req.params.id);
         res.status(httpStatus.OK).json({
             success: true,
             statusCode: httpStatus.OK,

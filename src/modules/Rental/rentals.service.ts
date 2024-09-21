@@ -45,13 +45,18 @@ const rentBikeToDB = async (payload: Partial<TRental>) => {
 
 }
 
-const returnBikeToDB = async (payload: string) => {
+const returnBikeToDB = async (payload: Partial<TRental>, id: string) => {
     const session = await mongoose.startSession();
     const existingBikeRentalData = await Rentals.findById(
-        { _id: payload }
+        { _id: id }
     );
 
-    // handling edge case when admin tries to return a bike that is already returned
+    const returnBikeUpdatedData = {
+        returnTime: payload?.returnTime,
+        totalCost: payload?.totalCost,
+        isReturned: payload?.isReturned,
+        finalPaymentId: payload?.finalPaymentId
+    }
 
     if (existingBikeRentalData?.isReturned) {
         throw new AppError(httpStatus.BAD_REQUEST, `Bike already returned`);
@@ -64,26 +69,33 @@ const returnBikeToDB = async (payload: string) => {
         throw new AppError(httpStatus.NOT_FOUND, 'No price per hour data found for the bike');
     }
 
-    //calculating the time difference between rent and return
-    const startTimeInMS = existingBikeRentalData?.startTime.getTime();
-    const returnTimeInMS = Date.now();
-    const returnTime = new Date();
-    let totalCost: number = 0;
+    // codes commented above are needed
 
-    if (startTimeInMS) {
-        const totalRentDuration = (returnTimeInMS - startTimeInMS) / (1000 * 60 * 60); //to convert milliseconds to hours
-        totalCost = Number((totalRentDuration * Number(bikeData?.pricePerHour)).toFixed(2));
-        // console.log(Number(totalCost.toFixed(2)));
-    } else {
-        throw new AppError(httpStatus.NOT_ACCEPTABLE, 'Invalid Start Time')
-    }
+
+    //calculating the time difference between rent and return
+    // const startTimeInMS = existingBikeRentalData?.startTime.getTime();
+    // const returnTimeInMS = Date.now();
+    // const returnTime = new Date();
+    // let totalCost: number = 0;
+
+    // if (startTimeInMS) {
+    //     const totalRentDuration = (returnTimeInMS - startTimeInMS) / (1000 * 60 * 60); //to convert milliseconds to hours
+    //     totalCost = Number((totalRentDuration * Number(bikeData?.pricePerHour)).toFixed(2));
+    //     // console.log(Number(totalCost.toFixed(2)));
+    // } else {
+    //     throw new AppError(httpStatus.NOT_ACCEPTABLE, 'Invalid Start Time')
+    // }
+
+    // codes below will be nedded
+
 
     try {
         session.startTransaction();
         //transaction1: update the return status and totalCost of the rent
         const updateRentAndReturnStatus = await Rentals.findByIdAndUpdate(
-            { _id: payload },
-            { $set: { returnTime: returnTime, totalCost: totalCost, isReturned: true } },
+            { _id: id },
+            // { $set: { returnTime: payload.returnTime, totalCost: payload.totalCost, isReturned: true } },
+            returnBikeUpdatedData,
             { new: true, session }
         );
 
