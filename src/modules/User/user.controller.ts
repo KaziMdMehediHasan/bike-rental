@@ -4,18 +4,33 @@ import { UserServices } from "./user.service";
 import httpStatus from "http-status";
 import { ExtendedRequest } from "../../interface";
 
-// const getAllUsers = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
-//     try {
-//         const result = await UserServices.getAllUsersFromDB();
-//         res.status(200).json({
-//             success: true,
-//             statusCode: 200,
-//             message: result
-//         })
-//     } catch (err) {
-//         next(err);
-//     }
-// }
+const getAllUsers = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
+    try {
+        const result = await UserServices.getAllUsersFromDB();
+        res.status(200).json({
+            success: true,
+            statusCode: 200,
+            message: 'All user data retrieved successfully',
+            data: result
+        })
+    } catch (err) {
+        next(err);
+    }
+}
+
+const deleteUser = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
+    try {
+        const result = await UserServices.deleteUserFromDB(req.params.id);
+        res.status(200).json({
+            success: true,
+            statusCode: 200,
+            message: 'User deleted successfully',
+            data: result
+        })
+    } catch (err) {
+        next(err);
+    }
+}
 const getUserProfile = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
     try {
         let userId: string = '';
@@ -67,7 +82,23 @@ const updateUserProfile = async (req: ExtendedRequest, res: Response, next: Next
     }
 }
 
+const promoteToAdmin = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
+    try {
+        const result = await UserServices.makeUserAdmin(req.params.id);
+        res.status(200).json({
+            success: true,
+            statusCode: 200,
+            message: 'User promoted to admin successfully',
+            data: result
+        })
+    } catch (err) {
+        next(err);
+    }
+}
 export const UserControllers = {
+    getAllUsers,
+    deleteUser,
     getUserProfile,
-    updateUserProfile
+    updateUserProfile,
+    promoteToAdmin
 }
