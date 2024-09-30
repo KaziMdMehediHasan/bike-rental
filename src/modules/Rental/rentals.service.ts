@@ -86,8 +86,7 @@ const returnBikeToDB = async (payload: Partial<TRental>, id: string) => {
     //     throw new AppError(httpStatus.NOT_ACCEPTABLE, 'Invalid Start Time')
     // }
 
-    // codes below will be nedded
-
+    // codes below will be needed
 
     try {
         session.startTransaction();
@@ -127,15 +126,83 @@ const returnBikeToDB = async (payload: Partial<TRental>, id: string) => {
 
 }
 
-const getAllRentalsFromDB = async (payload: string) => {
+const returnBikeToDBByAdmin = async (payload: Partial<TRental>, id: string) => {
+    const session = await mongoose.startSession();
+    const existingBikeRentalData = await Rentals.findById(
+        { _id: id }
+    );
+    const returnBikeUpdatedData = {
+        returnTime: payload?.returnTime,
+        totalCost: payload?.totalCost,
+        isReturned: payload?.isReturned,
+    }
+    if (existingBikeRentalData?.isReturned) {
+        throw new AppError(httpStatus.BAD_REQUEST, `Bike already returned`);
+    }
+
+    // checking if the bike exist 
+    const bikeData = await Bikes.findById({ _id: existingBikeRentalData?.bikeId });
+
+    if (!bikeData) {
+        throw new AppError(httpStatus.NOT_FOUND, 'No price per hour data found for the bike');
+    }
+    try {
+        session.startTransaction();
+        //transaction1: update the return status and totalCost of the rent
+        const updateRentAndReturnStatus = await Rentals.findByIdAndUpdate(
+            { _id: id },
+            // { $set: { returnTime: payload.returnTime, totalCost: payload.totalCost, isReturned: true } },
+            returnBikeUpdatedData,
+            { new: true, session }
+        );
+
+        if (!updateRentAndReturnStatus) {
+            throw new Error('Unable to return the bike');
+        }
+        // transaction 2: update the bike availability status
+
+        const bikeIsAvailable = await Bikes.findByIdAndUpdate(
+            { _id: existingBikeRentalData?.bikeId },
+            { $set: { isAvailable: true } },
+            { new: true, session }
+        )
+
+        if (!bikeIsAvailable) {
+            throw new Error(`Bike available status could not be updated`)
+        }
+        // console.log(startTime, returnTime);
+
+        await session.commitTransaction();
+        await session.endSession();
+        return { updateRentAndReturnStatus, bikeIsAvailable }
+    } catch (err) {
+        await session.abortTransaction();
+        await session.endSession();
+        throw err;
+    }
+}
+const getAllUserRentalsFromDB = async (payload: string) => {
     const result = await Rentals.find(
         { userId: payload }
     )
         .populate('bikeId').populate('userId');
     return result;
 }
+
+const getAllRentalsFromDB = async () => {
+    const result = await Rentals.find().populate('bikeId').populate('userId');
+    return result;
+}
+
+const deleteRentalsFromDB = async (id: string) => {
+    const result = await Rentals.findByIdAndDelete({ _id: id });
+    return result;
+}
 export const RentalsServices = {
     rentBikeToDB,
     returnBikeToDB,
-    getAllRentalsFromDB
+    getAllUserRentalsFromDB,
+    getAllRentalsFromDB,
+    deleteRentalsFromDB,
+    returnBikeToDBByAdmin
 }

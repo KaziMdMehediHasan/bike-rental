@@ -82,9 +82,22 @@ const returnBike = async (req: ExtendedRequest, res: Response, next: NextFunctio
 
 }
 
-const getAllRentals = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
+const returnBikeByAdmin = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
     try {
-        const result = await RentalsServices.getAllRentalsFromDB(req.user?.userId);
+        const result = await RentalsServices.returnBikeToDBByAdmin(req.body, req.params.id);
+        res.status(httpStatus.OK).json({
+            success: true,
+            statusCode: httpStatus.OK,
+            message: "Bike returned successfully",
+            data: result.updateRentAndReturnStatus
+        })
+    } catch (err) {
+        next(err);
+    }
+}
+const getAllUserRentals = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
+    try {
+        const result = await RentalsServices.getAllUserRentalsFromDB(req.user?.userId);
         if (!result.length) {
             throw new AppError(httpStatus.NO_CONTENT, 'No Data Found');
         }
@@ -100,8 +113,42 @@ const getAllRentals = async (req: ExtendedRequest, res: Response, next: NextFunc
 
 }
 
+const getAllRentals = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
+    try {
+        const result = await RentalsServices.getAllRentalsFromDB();
+        if (!result.length) {
+            throw new AppError(httpStatus.NO_CONTENT, 'No Data Found');
+        }
+        res.status(httpStatus.OK).json({
+            success: true,
+            statusCode: httpStatus.OK,
+            message: 'All rentals retrieved successfully',
+            data: result
+        })
+    } catch (err) {
+        next(err);
+    }
+}
+
+const deleteRentals = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
+    try {
+        const result = await RentalsServices.deleteRentalsFromDB(req.params.id);
+        res.status(httpStatus.OK).json({
+            success: true,
+            statusCode: httpStatus.OK,
+            message: 'Rental data deleted successfully',
+            data: result
+        })
+    } catch (err) {
+        next(err);
+    }
+}
+
 export const RentalsControllers = {
     rentBike,
     returnBike,
-    getAllRentals
+    getAllUserRentals,
+    getAllRentals,
+    deleteRentals,
+    returnBikeByAdmin
 }
