@@ -46,25 +46,29 @@ const rentBikeToDB = async (payload: Partial<TRental>) => {
 }
 
 const returnBikeToDB = async (payload: Partial<TRental>, id: string) => {
+    console.log(payload, id);
     const session = await mongoose.startSession();
     const existingBikeRentalData = await Rentals.findById(
         { _id: id }
     );
 
+    console.log('found existing rent:', existingBikeRentalData)
     const returnBikeUpdatedData = {
-        returnTime: payload?.returnTime,
-        totalCost: payload?.totalCost,
-        isReturned: payload?.isReturned,
+        // not needed as it is done by admin. This will only be required when users attempt to return the bike. 
+        // returnTime: payload?.returnTime,
+        // totalCost: payload?.totalCost,
+        // isReturned: payload?.isReturned,
         finalPaymentId: payload?.finalPaymentId
     }
 
-    if (existingBikeRentalData?.isReturned) {
-        throw new AppError(httpStatus.BAD_REQUEST, `Bike already returned`);
-    }
+    // not needed when user is only paying
+    // if (existingBikeRentalData?.isReturned) {
+    //     throw new AppError(httpStatus.BAD_REQUEST, `Bike already returned`);
+    // }
 
     // checking if the bike exist 
     const bikeData = await Bikes.findById({ _id: existingBikeRentalData?.bikeId });
-
+    console.log('found existing bike:', bikeData);
     if (!bikeData) {
         throw new AppError(httpStatus.NOT_FOUND, 'No price per hour data found for the bike');
     }
@@ -97,12 +101,12 @@ const returnBikeToDB = async (payload: Partial<TRental>, id: string) => {
             returnBikeUpdatedData,
             { new: true, session }
         );
-
+        console.log('updated existing rent:', updateRentAndReturnStatus);
         if (!updateRentAndReturnStatus) {
             throw new Error('Unable to return the bike');
         }
         // transaction 2: update the bike availability status
-
+        // not needed as it is done by admin. This will only be required when users attempt to return the bike.
         const bikeIsAvailable = await Bikes.findByIdAndUpdate(
             { _id: existingBikeRentalData?.bikeId },
             { $set: { isAvailable: true } },
