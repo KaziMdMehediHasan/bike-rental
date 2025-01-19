@@ -38,6 +38,13 @@ const BikeRentalSchema = new mongoose_1.Schema({
     isReturned: {
         type: "boolean",
         default: false
+    },
+    advancePaymentId: {
+        type: "string"
+    },
+    finalPaymentId: {
+        type: "string",
+        default: ''
     }
 }, {
     versionKey: false

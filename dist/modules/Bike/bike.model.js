@@ -34,6 +34,9 @@ const createBikeSchema = new mongoose_1.Schema({
     brand: {
         type: "string",
         required: true
+    },
+    img: {
+        type: "string",
     }
 }, { versionKey: false });
 exports.Bikes = (0, mongoose_1.model)('Bikes', createBikeSchema);

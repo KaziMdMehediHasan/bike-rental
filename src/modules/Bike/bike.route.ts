@@ -9,7 +9,8 @@ import { upload } from '../../middlewares/multer-config';
 
 const router = express.Router();
 
-router.post("/", auth(USER_ROLE.admin), upload.single('img'), BikeController.createBike)
+// router.post("/", auth(USER_ROLE.admin), upload.single('img'), BikeController.createBike)
+router.post("/", auth(USER_ROLE.admin), upload.single('img'), BikeController.createBike);
 // validateRequest(BikeValidation.createBikeValidationSchema), auth(USER_ROLE.admin), BikeController.createBike
 router.get("/", BikeController.getAllBikes);
 router.get("/:id", BikeController.getSingleBike);

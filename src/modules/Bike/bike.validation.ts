@@ -10,9 +10,9 @@ const createBikeValidationSchema = z.object({
         year: z.number({ required_error: "Year is required" }),
         model: z.string().min(1, { message: "Model is required" }),
         brand: z.string().min(1, { message: "Brand is required" }),
-        img: z.string().optional()
+        img: z.string()
     })
-})
+});
 const updateBikeValidationSchema = z.object({
     body: z.object({
         name: z.string().optional(),
@@ -25,9 +25,9 @@ const updateBikeValidationSchema = z.object({
         brand: z.string().optional(),
     }).optional()
 
-})
+});
 
 export const BikeValidation = {
     createBikeValidationSchema,
     updateBikeValidationSchema
-}
+};

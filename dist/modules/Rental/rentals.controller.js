@@ -21,12 +21,15 @@ const mongoose_1 = require("mongoose");
 // import { Rentals } from "./rentals.model";
 const rentBike = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
-    const { bikeId, startTime } = req.body;
+    const { bikeId, startTime, advancePaymentId, finalPaymentId } = req.body;
     const rentalData = {
         userId: (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId,
         bikeId: bikeId,
-        startTime: startTime
+        startTime: startTime,
+        advancePaymentId: advancePaymentId,
+        finalPaymentId: finalPaymentId
     };
+    // console.log(req.user, req.body);
     try {
         const validatedRentData = rentals_validation_1.RentalsValidations.bikeRentValidationSchema.parse(rentalData);
         // the following codes up until result, is a fix for type conflict
@@ -41,7 +44,9 @@ const rentBike = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
         const newRentalData = {
             userId: userId,
             bikeId: bikeId,
-            startTime: new Date(validatedRentData.startTime)
+            startTime: new Date(validatedRentData.startTime),
+            advancePaymentId: advancePaymentId,
+            finalPaymentId: finalPaymentId
         };
         // finally sending the data to the service to create a new rental
         const result = yield rentals_service_1.RentalsServices.rentBikeToDB(newRentalData);
@@ -68,7 +73,7 @@ const rentBike = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
 });
 const returnBike = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const result = yield rentals_service_1.RentalsServices.returnBikeToDB(req.params.id);
+        const result = yield rentals_service_1.RentalsServices.returnBikeToDB(req.body, req.params.id);
         res.status(http_status_1.default.OK).json({
             success: true,
             statusCode: http_status_1.default.OK,
@@ -80,10 +85,24 @@ const returnBike = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
         next(err);
     }
 });
-const getAllRentals = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const returnBikeByAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const result = yield rentals_service_1.RentalsServices.returnBikeToDBByAdmin(req.body, req.params.id);
+        res.status(http_status_1.default.OK).json({
+            success: true,
+            statusCode: http_status_1.default.OK,
+            message: "Bike returned successfully",
+            data: result.updateRentAndReturnStatus
+        });
+    }
+    catch (err) {
+        next(err);
+    }
+});
+const getAllUserRentals = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _b;
     try {
-        const result = yield rentals_service_1.RentalsServices.getAllRentalsFromDB((_b = req.user) === null || _b === void 0 ? void 0 : _b.userId);
+        const result = yield rentals_service_1.RentalsServices.getAllUserRentalsFromDB((_b = req.user) === null || _b === void 0 ? void 0 : _b.userId);
         if (!result.length) {
             throw new AppError_1.default(http_status_1.default.NO_CONTENT, 'No Data Found');
         }
@@ -98,8 +117,42 @@ const getAllRentals = (req, res, next) => __awaiter(void 0, void 0, void 0, func
         next(err);
     }
 });
+const getAllRentals = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const result = yield rentals_service_1.RentalsServices.getAllRentalsFromDB();
+        if (!result.length) {
+            throw new AppError_1.default(http_status_1.default.NO_CONTENT, 'No Data Found');
+        }
+        res.status(http_status_1.default.OK).json({
+            success: true,
+            statusCode: http_status_1.default.OK,
+            message: 'All rentals retrieved successfully',
+            data: result
+        });
+    }
+    catch (err) {
+        next(err);
+    }
+});
+const deleteRentals = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const result = yield rentals_service_1.RentalsServices.deleteRentalsFromDB(req.params.id);
+        res.status(http_status_1.default.OK).json({
+            success: true,
+            statusCode: http_status_1.default.OK,
+            message: 'Rental data deleted successfully',
+            data: result
+        });
+    }
+    catch (err) {
+        next(err);
+    }
+});
 exports.RentalsControllers = {
     rentBike,
     returnBike,
-    getAllRentals
+    getAllUserRentals,
+    getAllRentals,
+    deleteRentals,
+    returnBikeByAdmin
 };

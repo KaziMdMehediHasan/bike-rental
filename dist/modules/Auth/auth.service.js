@@ -18,6 +18,7 @@ const user_model_1 = require("../User/user.model");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const createNewUserIntoDB = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+    // console.log('from auth service:', payload);
     const result = yield user_model_1.Users.create(payload);
     return result;
 });

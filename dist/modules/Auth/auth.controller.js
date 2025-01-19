@@ -30,7 +30,8 @@ const AppError_1 = __importDefault(require("../../errors/AppError"));
 const createNewUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // const validatedUserData = userValidation.createUserValidationSchema.parse(req.body);
-        const result = yield auth_service_1.AuthServices.createNewUserIntoDB(req.body);
+        const userInfo = Object.assign(Object.assign({}, req.body), { role: 'user' });
+        const result = yield auth_service_1.AuthServices.createNewUserIntoDB(userInfo);
         const responseObject = result.toObject();
         const copiedResponse = Object.assign({}, responseObject);
         // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars

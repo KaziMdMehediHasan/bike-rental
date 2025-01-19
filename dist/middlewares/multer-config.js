@@ -1,8 +1,12 @@
-import multer from 'multer';
-
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.upload = void 0;
+const multer_1 = __importDefault(require("multer"));
 // // const storage = multer.memoryStorage()  // store image in memory
 // export const upload = multer({ dest: "./upload" })
-
 // storage configuration for multer
 // const storage = multer.diskStorage({
 //     destination: function (req, file, cb) {
@@ -14,5 +18,5 @@ import multer from 'multer';
 //     },
 // });
 // Set up Multer for handling file uploads
-const storage = multer.memoryStorage();
-export const upload = multer({ storage: storage });
+const storage = multer_1.default.memoryStorage();
+exports.upload = (0, multer_1.default)({ storage: storage });

@@ -15,17 +15,26 @@ const getAllUsersFromDB = () => __awaiter(void 0, void 0, void 0, function* () {
     const users = yield user_model_1.Users.find({}).select("-password");
     return users;
 });
+const deleteUserFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield user_model_1.Users.findByIdAndDelete({ _id: id });
+    return user;
+});
 const getUserFromDB = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const profile = yield user_model_1.Users.findById({ _id: payload }).select("-password");
     return profile;
 });
 const updateUserProfileIntoDB = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
-    // console.log(id, payload);
     const result = yield user_model_1.Users.findOneAndUpdate({ _id: id }, payload, { new: true }).select("-password -createdAt -updatedAt -__v");
+    return result;
+});
+const makeUserAdmin = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield user_model_1.Users.findByIdAndUpdate({ _id: id }, { $set: { role: "admin" } }, { new: true }).select("-password -createdAt -updatedAt -__v");
     return result;
 });
 exports.UserServices = {
     getUserFromDB,
+    deleteUserFromDB,
+    updateUserProfileIntoDB,
     getAllUsersFromDB,
-    updateUserProfileIntoDB
+    makeUserAdmin
 };

@@ -22,7 +22,22 @@ const getAllUsers = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
         res.status(200).json({
             success: true,
             statusCode: 200,
-            message: result
+            message: 'All user data retrieved successfully',
+            data: result
+        });
+    }
+    catch (err) {
+        next(err);
+    }
+});
+const deleteUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const result = yield user_service_1.UserServices.deleteUserFromDB(req.params.id);
+        res.status(200).json({
+            success: true,
+            statusCode: 200,
+            message: 'User deleted successfully',
+            data: result
         });
     }
     catch (err) {
@@ -63,7 +78,6 @@ const updateUserProfile = (req, res, next) => __awaiter(void 0, void 0, void 0, 
             });
         }
         else {
-            // const updatedUserProfileData = userValidation.userValidationUpdateSchema.parse(req.body);
             const result = yield user_service_1.UserServices.updateUserProfileIntoDB(userId, req.body);
             res.status(200).json({
                 success: true,
@@ -77,8 +91,24 @@ const updateUserProfile = (req, res, next) => __awaiter(void 0, void 0, void 0, 
         next(err);
     }
 });
+const promoteToAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const result = yield user_service_1.UserServices.makeUserAdmin(req.params.id);
+        res.status(200).json({
+            success: true,
+            statusCode: 200,
+            message: 'User promoted to admin successfully',
+            data: result
+        });
+    }
+    catch (err) {
+        next(err);
+    }
+});
 exports.UserControllers = {
-    getUserProfile,
     getAllUsers,
-    updateUserProfile
+    deleteUser,
+    getUserProfile,
+    updateUserProfile,
+    promoteToAdmin
 };

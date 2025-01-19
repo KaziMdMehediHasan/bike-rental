@@ -13,7 +13,9 @@ const zod_1 = require("zod");
 const bikeRentValidationSchema = zod_1.z.object({
     userId: zod_1.z.string(),
     bikeId: zod_1.z.string(),
-    startTime: zod_1.z.string().datetime()
+    startTime: zod_1.z.string().datetime(),
+    advancePaymentId: zod_1.z.string().optional(),
+    finalPaymentId: zod_1.z.string().optional().default(''),
     // returnTime: z.string().datetime().nullable().default(null),
 });
 // const objectIdSchema = z.instanceof(Types.ObjectId);

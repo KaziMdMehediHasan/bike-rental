@@ -9,7 +9,7 @@ const createUserValidationSchema = zod_1.z.object({
         password: zod_1.z.string(),
         phone: zod_1.z.string(),
         address: zod_1.z.string(),
-        role: zod_1.z.enum(['admin', 'user'])
+        role: zod_1.z.enum(['admin', 'user']).optional()
     })
 });
 const userValidationUpdateSchema = zod_1.z.object({
@@ -18,6 +18,7 @@ const userValidationUpdateSchema = zod_1.z.object({
         email: zod_1.z.string().optional(),
         phone: zod_1.z.string().optional(),
         address: zod_1.z.string().optional(),
+        profileImg: zod_1.z.string().optional(),
     }).optional()
 });
 exports.userValidation = {

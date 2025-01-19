@@ -8,8 +8,6 @@ import { TBike, TCloudinaryRes } from "./bike.interface";
 
 const createBike = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
     try {
-        // console.log(req.body, req.file);
-        let cloudinaryRes: TCloudinaryRes = {};
         const payload: TBike = { ...req.body };
 
         if (req.body.year) payload.year = Number(req.body.year);
@@ -17,23 +15,39 @@ const createBike = async (req: ExtendedRequest, res: Response, next: NextFunctio
         if (req.body.pricePerHour) payload.pricePerHour = Number(req.body.pricePerHour);
         if (req.body.isAvailable) payload.isAvailable = req.body.isAvailable === 'false' ? false : true;
         if (req.file) {
-            cloudinaryRes = await cloudinary.uploader.upload(req.file.path, {
-                folder: 'bike_images'
+            const uploadPromise = new Promise((resolve, reject) => {
+                const upload_stream = cloudinary.uploader.upload_stream({
+                    resource_type: 'image',
+                    folder: 'bike_images'
+                }, (error, results) => {
+                    if (error) {
+                        reject(error);
+                        throw new AppError(400, "Error uploading image");
+                    } else {
+                        resolve(results);
+                    }
+                });
+                upload_stream.end(req.file?.buffer);
             });
-            payload.img = cloudinaryRes.url;
+
+            const result = await uploadPromise as TCloudinaryRes;
+
+            payload.img = result.url;
         }
+
+        // console.log('final payload');
         const result = await BikeServices.createBikeIntoDB(payload);
         res.status(httpStatus.OK).json({
             success: true,
             statusCode: httpStatus.OK,
             message: "Bike added successfully",
             data: result
-        })
+        });
     } catch (err) {
         next(err);
     }
 
-}
+};
 const getAllBikes = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
     try {
         const result = await BikeServices.getAllBikesFromDB();
@@ -49,7 +63,7 @@ const getAllBikes = async (req: ExtendedRequest, res: Response, next: NextFuncti
     } catch (err) {
         next(err);
     }
-}
+};
 
 const getSingleBike = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
     try {
@@ -59,16 +73,15 @@ const getSingleBike = async (req: ExtendedRequest, res: Response, next: NextFunc
             statusCode: httpStatus.OK,
             message: 'Bike data retrieved successfully',
             data: result
-        })
+        });
     } catch (err) {
         next(err);
     }
 
-}
+};
 
 const updateBike = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
     try {
-        let cloudinaryRes: TCloudinaryRes = {};
         const payload: Partial<TBike> = { ...req.body };
 
         if (req.body.year) payload.year = Number(req.body.year);
@@ -76,10 +89,29 @@ const updateBike = async (req: ExtendedRequest, res: Response, next: NextFunctio
         if (req.body.pricePerHour) payload.pricePerHour = Number(req.body.pricePerHour);
         if (req.body.isAvailable) payload.isAvailable = req.body.isAvailable === 'true' ? true : false;
         if (req.file) {
-            cloudinaryRes = await cloudinary.uploader.upload(req.file.path, {
-                folder: 'bike_images'
+            // cloudinaryRes = await cloudinary.uploader.upload(req.file.path, {
+            //     resource_type: 'image',
+            //     folder: 'bike_images'
+            // });
+            // payload.img = cloudinaryRes.url;
+            const uploadPromise = new Promise((resolve, reject) => {
+                const upload_stream = cloudinary.uploader.upload_stream({
+                    resource_type: 'image',
+                    folder: 'bike_images'
+                }, (error, results) => {
+                    if (error) {
+                        reject(error);
+                        throw new AppError(400, "Error uploading image");
+                    } else {
+                        resolve(results);
+                    }
+                });
+                upload_stream.end(req.file?.buffer);
             });
-            payload.img = cloudinaryRes.url;
+
+            const result = await uploadPromise as TCloudinaryRes;
+
+            payload.img = result.url;
         }
         // console.log(payload);
         const result = await BikeServices.updateBikesIntoDB(req.params.id, payload);
@@ -93,7 +125,7 @@ const updateBike = async (req: ExtendedRequest, res: Response, next: NextFunctio
         next(err);
     }
 
-}
+};
 
 const deleteBike = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
     try {
@@ -108,7 +140,7 @@ const deleteBike = async (req: ExtendedRequest, res: Response, next: NextFunctio
         next(err);
     }
 
-}
+};
 
 // const postImgToCloudinary = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
 //     // potential undefined type error fix
@@ -140,4 +172,4 @@ export const BikeController = {
     updateBike,
     deleteBike,
     // postImgToCloudinary
-}
+};

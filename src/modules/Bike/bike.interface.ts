@@ -8,7 +8,7 @@ export type TBike = {
     model: string;
     brand: string;
     img?: string;
-}
+};
 
 export type TCloudinaryRes = {
     asset_id?: string;
@@ -32,4 +32,4 @@ export type TCloudinaryRes = {
     display_name?: string;
     original_filename?: string;
     api_key?: string;
-}
+};

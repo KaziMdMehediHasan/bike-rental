@@ -11,12 +11,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BikeServices = void 0;
 const bike_model_1 = require("./bike.model");
+// import { v2 as cloudinary } from 'cloudinary';
 const createBikeIntoDB = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield bike_model_1.Bikes.create(payload);
     return result;
 });
 const getAllBikesFromDB = () => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield bike_model_1.Bikes.find();
+    return result;
+});
+const getSingleBikeFromDB = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield bike_model_1.Bikes.findOne({ _id: payload });
     return result;
 });
 const updateBikesIntoDB = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
@@ -27,9 +32,18 @@ const deleteBikesFromDB = (id) => __awaiter(void 0, void 0, void 0, function* ()
     const result = bike_model_1.Bikes.findByIdAndDelete({ _id: id });
     return result;
 });
+// const uploadBikeImgToCloudinaryDB = async (payload: string) => {
+//     // console.log('From service', payload);
+//     const result = await cloudinary.uploader.upload(payload, {
+//         folder: 'bike_images'
+//     });
+//     return result;
+// }
 exports.BikeServices = {
     createBikeIntoDB,
     getAllBikesFromDB,
+    getSingleBikeFromDB,
     updateBikesIntoDB,
-    deleteBikesFromDB
+    deleteBikesFromDB,
+    // uploadBikeImgToCloudinaryDB
 };

@@ -49,10 +49,73 @@ const rentBikeToDB = (payload) => __awaiter(void 0, void 0, void 0, function* ()
         throw err;
     }
 });
-const returnBikeToDB = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+const returnBikeToDB = (payload, id) => __awaiter(void 0, void 0, void 0, function* () {
     const session = yield mongoose_1.default.startSession();
-    const existingBikeRentalData = yield rentals_model_1.Rentals.findById({ _id: payload });
-    // handling edge case when admin tries to return a bike that is already returned
+    const existingBikeRentalData = yield rentals_model_1.Rentals.findById({ _id: id });
+    const returnBikeUpdatedData = {
+        // not needed as it is done by admin. This will only be required when users attempt to return the bike. 
+        // returnTime: payload?.returnTime,
+        // totalCost: payload?.totalCost,
+        // isReturned: payload?.isReturned,
+        finalPaymentId: payload === null || payload === void 0 ? void 0 : payload.finalPaymentId
+    };
+    // not needed when user is only paying
+    // if (existingBikeRentalData?.isReturned) {
+    //     throw new AppError(httpStatus.BAD_REQUEST, `Bike already returned`);
+    // }
+    // checking if the bike exist 
+    const bikeData = yield bike_model_1.Bikes.findById({ _id: existingBikeRentalData === null || existingBikeRentalData === void 0 ? void 0 : existingBikeRentalData.bikeId });
+    if (!bikeData) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'No price per hour data found for the bike');
+    }
+    // codes commented above are needed
+    //calculating the time difference between rent and return
+    // const startTimeInMS = existingBikeRentalData?.startTime.getTime();
+    // const returnTimeInMS = Date.now();
+    // const returnTime = new Date();
+    // let totalCost: number = 0;
+    // if (startTimeInMS) {
+    //     const totalRentDuration = (returnTimeInMS - startTimeInMS) / (1000 * 60 * 60); //to convert milliseconds to hours
+    //     totalCost = Number((totalRentDuration * Number(bikeData?.pricePerHour)).toFixed(2));
+    //     // console.log(Number(totalCost.toFixed(2)));
+    // } else {
+    //     throw new AppError(httpStatus.NOT_ACCEPTABLE, 'Invalid Start Time')
+    // }
+    // codes below will be needed
+    try {
+        session.startTransaction();
+        //transaction1: update the return status and totalCost of the rent
+        const updateRentAndReturnStatus = yield rentals_model_1.Rentals.findByIdAndUpdate({ _id: id }, 
+        // { $set: { returnTime: payload.returnTime, totalCost: payload.totalCost, isReturned: true } },
+        returnBikeUpdatedData, { new: true, session });
+        if (!updateRentAndReturnStatus) {
+            throw new Error('Unable to return the bike');
+        }
+        // transaction 2: update the bike availability status
+        // not needed as it is done by admin. This will only be required when users attempt to return the bike.
+        const bikeIsAvailable = yield bike_model_1.Bikes.findByIdAndUpdate({ _id: existingBikeRentalData === null || existingBikeRentalData === void 0 ? void 0 : existingBikeRentalData.bikeId }, { $set: { isAvailable: true } }, { new: true, session });
+        if (!bikeIsAvailable) {
+            throw new Error(`Bike available status could not be updated`);
+        }
+        // console.log(startTime, returnTime);
+        yield session.commitTransaction();
+        yield session.endSession();
+        return { updateRentAndReturnStatus, bikeIsAvailable };
+    }
+    catch (err) {
+        yield session.abortTransaction();
+        yield session.endSession();
+        throw err;
+    }
+});
+const returnBikeToDBByAdmin = (payload, id) => __awaiter(void 0, void 0, void 0, function* () {
+    const session = yield mongoose_1.default.startSession();
+    const existingBikeRentalData = yield rentals_model_1.Rentals.findById({ _id: id });
+    const returnBikeUpdatedData = {
+        returnTime: payload === null || payload === void 0 ? void 0 : payload.returnTime,
+        totalCost: payload === null || payload === void 0 ? void 0 : payload.totalCost,
+        isReturned: payload === null || payload === void 0 ? void 0 : payload.isReturned,
+    };
     if (existingBikeRentalData === null || existingBikeRentalData === void 0 ? void 0 : existingBikeRentalData.isReturned) {
         throw new AppError_1.default(http_status_1.default.BAD_REQUEST, `Bike already returned`);
     }
@@ -61,23 +124,12 @@ const returnBikeToDB = (payload) => __awaiter(void 0, void 0, void 0, function* 
     if (!bikeData) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'No price per hour data found for the bike');
     }
-    //calculating the time difference between rent and return
-    const startTimeInMS = existingBikeRentalData === null || existingBikeRentalData === void 0 ? void 0 : existingBikeRentalData.startTime.getTime();
-    const returnTimeInMS = Date.now();
-    const returnTime = new Date();
-    let totalCost = 0;
-    if (startTimeInMS) {
-        const totalRentDuration = (returnTimeInMS - startTimeInMS) / (1000 * 60 * 60); //to convert milliseconds to hours
-        totalCost = Number((totalRentDuration * Number(bikeData === null || bikeData === void 0 ? void 0 : bikeData.pricePerHour)).toFixed(2));
-        // console.log(Number(totalCost.toFixed(2)));
-    }
-    else {
-        throw new AppError_1.default(http_status_1.default.NOT_ACCEPTABLE, 'Invalid Start Time');
-    }
     try {
         session.startTransaction();
         //transaction1: update the return status and totalCost of the rent
-        const updateRentAndReturnStatus = yield rentals_model_1.Rentals.findByIdAndUpdate({ _id: payload }, { $set: { returnTime: returnTime, totalCost: totalCost, isReturned: true } }, { new: true, session });
+        const updateRentAndReturnStatus = yield rentals_model_1.Rentals.findByIdAndUpdate({ _id: id }, 
+        // { $set: { returnTime: payload.returnTime, totalCost: payload.totalCost, isReturned: true } },
+        returnBikeUpdatedData, { new: true, session });
         if (!updateRentAndReturnStatus) {
             throw new Error('Unable to return the bike');
         }
@@ -97,12 +149,24 @@ const returnBikeToDB = (payload) => __awaiter(void 0, void 0, void 0, function* 
         throw err;
     }
 });
-const getAllRentalsFromDB = (payload) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield rentals_model_1.Rentals.find({ userId: payload });
+const getAllUserRentalsFromDB = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield rentals_model_1.Rentals.find({ userId: payload })
+        .populate('bikeId').populate('userId');
+    return result;
+});
+const getAllRentalsFromDB = () => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield rentals_model_1.Rentals.find().populate('bikeId').populate('userId');
+    return result;
+});
+const deleteRentalsFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield rentals_model_1.Rentals.findByIdAndDelete({ _id: id });
     return result;
 });
 exports.RentalsServices = {
     rentBikeToDB,
     returnBikeToDB,
-    getAllRentalsFromDB
+    getAllUserRentalsFromDB,
+    getAllRentalsFromDB,
+    deleteRentalsFromDB,
+    returnBikeToDBByAdmin
 };
