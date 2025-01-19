@@ -7,10 +7,10 @@ import validateRequest from '../../middlewares/validateRequest';
 
 const router = express.Router();
 
-router.get('/', auth(USER_ROLE.admin), UserControllers.getAllUsers);
-router.delete('/:id', auth(USER_ROLE.admin), UserControllers.deleteUser);
-router.put('/:id', auth(USER_ROLE.admin), UserControllers.promoteToAdmin);
 router.get('/me', auth(USER_ROLE.admin, USER_ROLE.user), UserControllers.getUserProfile);
-router.put('/me', validateRequest(userValidation.userValidationUpdateSchema), auth(USER_ROLE.admin, USER_ROLE.user), UserControllers.updateUserProfile);
+router.put('/me', auth(USER_ROLE.admin, USER_ROLE.user), UserControllers.updateUserProfile);
+router.get('/', auth(USER_ROLE.admin), UserControllers.getAllUsers);
+router.put('/:id', auth(USER_ROLE.admin), UserControllers.promoteToAdmin);
+router.delete('/:id', validateRequest(userValidation.userValidationUpdateSchema), auth(USER_ROLE.admin), UserControllers.deleteUser);
 
 export const UserRoutes = router;

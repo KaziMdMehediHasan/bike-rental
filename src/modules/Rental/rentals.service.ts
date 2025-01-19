@@ -27,7 +27,7 @@ const rentBikeToDB = async (payload: Partial<TRental>) => {
             { _id: retrievedBikeId },
             { $set: { isAvailable: false } },
             { session, new: true }
-        )
+        );
 
         if (!updateBikeAvailability) {
             throw new AppError(httpStatus.NOT_MODIFIED, `Could not update bike availability`);
@@ -43,23 +43,21 @@ const rentBikeToDB = async (payload: Partial<TRental>) => {
         throw err;
     }
 
-}
+};
 
 const returnBikeToDB = async (payload: Partial<TRental>, id: string) => {
-    console.log(payload, id);
     const session = await mongoose.startSession();
     const existingBikeRentalData = await Rentals.findById(
         { _id: id }
     );
 
-    console.log('found existing rent:', existingBikeRentalData)
     const returnBikeUpdatedData = {
         // not needed as it is done by admin. This will only be required when users attempt to return the bike. 
         // returnTime: payload?.returnTime,
         // totalCost: payload?.totalCost,
         // isReturned: payload?.isReturned,
         finalPaymentId: payload?.finalPaymentId
-    }
+    };
 
     // not needed when user is only paying
     // if (existingBikeRentalData?.isReturned) {
@@ -68,7 +66,6 @@ const returnBikeToDB = async (payload: Partial<TRental>, id: string) => {
 
     // checking if the bike exist 
     const bikeData = await Bikes.findById({ _id: existingBikeRentalData?.bikeId });
-    console.log('found existing bike:', bikeData);
     if (!bikeData) {
         throw new AppError(httpStatus.NOT_FOUND, 'No price per hour data found for the bike');
     }
@@ -101,7 +98,7 @@ const returnBikeToDB = async (payload: Partial<TRental>, id: string) => {
             returnBikeUpdatedData,
             { new: true, session }
         );
-        console.log('updated existing rent:', updateRentAndReturnStatus);
+
         if (!updateRentAndReturnStatus) {
             throw new Error('Unable to return the bike');
         }
@@ -111,24 +108,24 @@ const returnBikeToDB = async (payload: Partial<TRental>, id: string) => {
             { _id: existingBikeRentalData?.bikeId },
             { $set: { isAvailable: true } },
             { new: true, session }
-        )
+        );
 
         if (!bikeIsAvailable) {
-            throw new Error(`Bike available status could not be updated`)
+            throw new Error(`Bike available status could not be updated`);
         }
         // console.log(startTime, returnTime);
 
         await session.commitTransaction();
         await session.endSession();
-        return { updateRentAndReturnStatus, bikeIsAvailable }
+        return { updateRentAndReturnStatus, bikeIsAvailable };
 
     } catch (err) {
         await session.abortTransaction();
         await session.endSession();
-        throw err
+        throw err;
     }
 
-}
+};
 
 const returnBikeToDBByAdmin = async (payload: Partial<TRental>, id: string) => {
     const session = await mongoose.startSession();
@@ -139,7 +136,7 @@ const returnBikeToDBByAdmin = async (payload: Partial<TRental>, id: string) => {
         returnTime: payload?.returnTime,
         totalCost: payload?.totalCost,
         isReturned: payload?.isReturned,
-    }
+    };
     if (existingBikeRentalData?.isReturned) {
         throw new AppError(httpStatus.BAD_REQUEST, `Bike already returned`);
     }
@@ -169,39 +166,40 @@ const returnBikeToDBByAdmin = async (payload: Partial<TRental>, id: string) => {
             { _id: existingBikeRentalData?.bikeId },
             { $set: { isAvailable: true } },
             { new: true, session }
-        )
+        );
 
         if (!bikeIsAvailable) {
-            throw new Error(`Bike available status could not be updated`)
+            throw new Error(`Bike available status could not be updated`);
         }
         // console.log(startTime, returnTime);
 
         await session.commitTransaction();
         await session.endSession();
-        return { updateRentAndReturnStatus, bikeIsAvailable }
+        return { updateRentAndReturnStatus, bikeIsAvailable };
     } catch (err) {
         await session.abortTransaction();
         await session.endSession();
         throw err;
     }
-}
+};
+
 const getAllUserRentalsFromDB = async (payload: string) => {
     const result = await Rentals.find(
         { userId: payload }
     )
         .populate('bikeId').populate('userId');
     return result;
-}
+};
 
 const getAllRentalsFromDB = async () => {
     const result = await Rentals.find().populate('bikeId').populate('userId');
     return result;
-}
+};
 
 const deleteRentalsFromDB = async (id: string) => {
     const result = await Rentals.findByIdAndDelete({ _id: id });
     return result;
-}
+};
 export const RentalsServices = {
     rentBikeToDB,
     returnBikeToDB,
@@ -209,4 +207,4 @@ export const RentalsServices = {
     getAllRentalsFromDB,
     deleteRentalsFromDB,
     returnBikeToDBByAdmin
-}
+};

@@ -12,11 +12,11 @@ const getAllUsers = async (req: ExtendedRequest, res: Response, next: NextFuncti
             statusCode: 200,
             message: 'All user data retrieved successfully',
             data: result
-        })
+        });
     } catch (err) {
         next(err);
     }
-}
+};
 
 const deleteUser = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
     try {
@@ -26,11 +26,11 @@ const deleteUser = async (req: ExtendedRequest, res: Response, next: NextFunctio
             statusCode: 200,
             message: 'User deleted successfully',
             data: result
-        })
+        });
     } catch (err) {
         next(err);
     }
-}
+};
 const getUserProfile = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
     try {
         let userId: string = '';
@@ -44,11 +44,11 @@ const getUserProfile = async (req: ExtendedRequest, res: Response, next: NextFun
             statusCode: 200,
             message: "User profile retrieved successfully",
             data: result
-        })
+        });
     } catch (err) {
         next(err);
     }
-}
+};
 
 
 const updateUserProfile = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
@@ -64,9 +64,8 @@ const updateUserProfile = async (req: ExtendedRequest, res: Response, next: Next
                 success: false,
                 statusCode: httpStatus.UNAUTHORIZED,
                 message: 'Request can not be processed'
-            })
+            });
         } else {
-            // const updatedUserProfileData = userValidation.userValidationUpdateSchema.parse(req.body);
             const result = await UserServices.updateUserProfileIntoDB(userId, req.body);
 
             res.status(200).json({
@@ -74,13 +73,13 @@ const updateUserProfile = async (req: ExtendedRequest, res: Response, next: Next
                 statusCode: 200,
                 message: "Profile updated successfully",
                 data: result
-            })
+            });
         }
 
     } catch (err) {
         next(err);
     }
-}
+};
 
 const promoteToAdmin = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
     try {
@@ -90,15 +89,15 @@ const promoteToAdmin = async (req: ExtendedRequest, res: Response, next: NextFun
             statusCode: 200,
             message: 'User promoted to admin successfully',
             data: result
-        })
+        });
     } catch (err) {
         next(err);
     }
-}
+};
 export const UserControllers = {
     getAllUsers,
     deleteUser,
     getUserProfile,
     updateUserProfile,
     promoteToAdmin
-}
+};
