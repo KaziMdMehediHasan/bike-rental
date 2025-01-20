@@ -63,7 +63,7 @@ const createBike = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
 });
 const getAllBikes = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const result = yield bike_service_1.BikeServices.getAllBikesFromDB();
+        const result = yield bike_service_1.BikeServices.getAllBikesFromDB(req.query);
         if (!result.length) {
             throw new AppError_1.default(http_status_1.default.NO_CONTENT, 'No Data Found');
         }

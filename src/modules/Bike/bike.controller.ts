@@ -50,7 +50,7 @@ const createBike = async (req: ExtendedRequest, res: Response, next: NextFunctio
 };
 const getAllBikes = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
     try {
-        const result = await BikeServices.getAllBikesFromDB();
+        const result = await BikeServices.getAllBikesFromDB(req.query);
         if (!result.length) {
             throw new AppError(httpStatus.NO_CONTENT, 'No Data Found');
         }

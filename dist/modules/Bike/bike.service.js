@@ -16,8 +16,23 @@ const createBikeIntoDB = (payload) => __awaiter(void 0, void 0, void 0, function
     const result = yield bike_model_1.Bikes.create(payload);
     return result;
 });
-const getAllBikesFromDB = () => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield bike_model_1.Bikes.find();
+const getAllBikesFromDB = (query) => __awaiter(void 0, void 0, void 0, function* () {
+    let searchTerm = '';
+    const duplicateQueryObj = Object.assign({}, query);
+    const bikeSearchFields = ['name', 'brand', 'model'];
+    // raw searching & filtering
+    if (query === null || query === void 0 ? void 0 : query.searchTerm) {
+        searchTerm = query === null || query === void 0 ? void 0 : query.searchTerm;
+    }
+    const searchQuery = bike_model_1.Bikes.find({
+        $or: bikeSearchFields.map((field) => ({
+            [field]: { $regex: searchTerm, $options: "i" }
+        }))
+    });
+    // filtering
+    const excludeFields = ['searchTerm'];
+    excludeFields.forEach(item => delete duplicateQueryObj[item]);
+    const result = yield searchQuery.find(duplicateQueryObj);
     return result;
 });
 const getSingleBikeFromDB = (payload) => __awaiter(void 0, void 0, void 0, function* () {
